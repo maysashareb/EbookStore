@@ -1,0 +1,26 @@
+﻿@model IEnumerable<EbookStore.Models.Book>
+
+<h2>Search Results</h2>
+
+@if (!Model.Any())
+{
+    <p>No books found matching your search.</p>
+}
+else
+{
+    <div class="ebooks-grid">
+        @foreach (var book in Model)
+        {
+            <div class="ebook-item">
+                <img src="@book.ImageUrl" alt="@book.Title" />
+                <div class="ebook-details">
+                    <h3>@book.Title</h3>
+                    <p>@book.Description</p>
+                    <p>Price: @book.Price.ToString("C")</p>
+                    <button class="buy-btn">Buy Now</button>
+                    <button class="borrow-btn">Borrow Now</button>
+                </div>
+            </div>
+        }
+    </div>
+}

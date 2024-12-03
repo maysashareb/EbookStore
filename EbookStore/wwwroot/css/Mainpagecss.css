@@ -1,0 +1,383 @@
+﻿namespace EbookStore.wwwroot.css
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* Marquee Section */
+.marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: #e64a19;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+    .marquee span {
+        display: inline-block;
+        padding-left: 100%;
+        animation: marquee-scroll 10s linear infinite;
+    }
+
+@keyframes marquee-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+/* Video Container */
+.video-container {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.background-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.video-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 2;
+}
+
+    .video-content h1 {
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+
+    .video-content p {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+
+    .video-content .explore-btn {
+        display: inline-block;
+        background-color: transparent;
+        border: 2px solid #fff;
+        padding: 10px 20px;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 20px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .video-content .explore-btn:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+/* Latest Buzz Section */
+.latest-buzz {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 50px 20px;
+    margin-top: 30px;
+}
+
+.latest-buzz-item {
+    width: calc(25% - 20px);
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.latest-buzz-title {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: black;
+    text-transform: uppercase;
+}
+
+.latest-buzz-item:hover {
+    transform: translateY(-10px);
+}
+
+.latest-buzz-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+}
+
+.latest-buzz-item .description {
+    padding: 20px;
+    text-align: center;
+}
+
+    .latest-buzz-item .description h3 {
+        font-size: 1.2em;
+        margin-top: 10px;
+        color: #333;
+    }
+
+    .latest-buzz-item .description p {
+        font-size: 1em;
+        color: #555;
+        margin: 10px 0;
+    }
+
+.latest-buzz-item .browse-btn {
+    display: inline-block;
+    background-color: #FF6F00;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    margin-top: 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+    .latest-buzz-item .browse-btn:hover {
+        background-color: #FF3D00;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .latest-buzz-item .browse-btn:active {
+        transform: translateY(0);
+    }
+
+/* FAQ Section */
+.faq-section {
+    background-color: #FFF9E6;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+    .faq-section h2 {
+        font-size: 2.2em;
+        font-weight: bold;
+        margin-bottom: 30px;
+        color: #333;
+        text-transform: uppercase;
+    }
+
+.faq-item {
+    background-color: white;
+    border: none;
+    margin-bottom: 15px;
+    padding: 15px 20px;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+    .faq-item:hover {
+        background-color: #FFFBF2;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+.faq-answer {
+    display: none;
+    padding: 15px 20px;
+    font-size: 1em;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    color: #555;
+}
+
+.faq-item.active .faq-answer {
+    display: block;
+}
+
+.faq-item .arrow {
+    float: right;
+    font-size: 1.2em;
+    color: #666;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.faq-item:hover .arrow {
+    color: #FF6F00;
+}
+
+.faq-item.active .arrow {
+    transform: rotate(180deg);
+    color: #FF6F00;
+}
+.ebooks-section {
+    background-color: white;
+    padding: 50px 10px; /* Reduced padding */
+    text-align: center;
+}
+
+    .ebooks-section h2 {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-bottom: 20px; /* Reduced margin */
+        color: #333;
+    }
+
+.ebooks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Reduced min-width */
+    gap: 10px; /* Reduced gap between items */
+    justify-items: center;
+}
+
+.ebook-item {
+    background-color: #FFFFFF;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 10px; /* Reduced padding inside the card */
+}
+
+    .ebook-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .ebook-item img {
+        width: 100%;
+        height: 250px; /* Reduced height */
+        object-fit: cover;
+    }
+
+.ebook-details {
+    padding: 10px; /* Reduced padding */
+}
+
+    .ebook-details h3 {
+        font-size: 1.2em; /* Reduced font size */
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .ebook-details p {
+        font-size: 0.9em; /* Reduced font size */
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+.buy-btn {
+    background-color: #FF6F00;
+    color: #fff;
+    padding: 8px 16px; /* Reduced padding */
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9em; /* Reduced font size */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin: 5px; /* Reduced margin between buttons */
+    display: inline-block;
+}
+
+    .buy-btn:hover {
+        background-color: #FF3D00;
+        transform: scale(1.1);
+    }
+
+/* Contact Section */
+.contact-section {
+    background-color: #FFF9E6;
+    padding: 60px 20px;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+    .contact-section h2 {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+    }
+
+.contact-section {
+    background-color: #FFF9E6;
+    padding: 60px 20px;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+    .contact-section h2 {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+    }
+
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Adds consistent spacing between all fields */
+}
+
+    .contact-form input,
+    .contact-form textarea {
+        width: 100%;
+        padding: 15px;
+        font-size: 1em;
+        border-radius: 30px; /* Make the shape consistent */
+        border: 1px solid #ddd;
+        outline: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .contact-form textarea {
+        resize: none; /* Prevent resizing */
+        height: 100px; /* Adjust height of the message box */
+    }
+
+    .contact-form button {
+        padding: 15px 30px;
+        font-size: 1.2em;
+        color: white;
+        background-color: #FF6F00;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+        .contact-form button:hover {
+            background-color: #FF3D00;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }

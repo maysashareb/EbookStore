@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EbookStore</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/EbookStore.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <!-- Logo and Brand -->
+                <div class="d-flex align-items-center">
+                    <img src="~/Content/worldvoyage.jpg" alt="WordVoyage Logo" style="height: 40px; width: 40px; margin-right: 10px; border-radius: 50%;" />
+                    <a class="navbar-brand" asp-area="" asp-controller="Customer" asp-action="Mainpage">WordVoyage</a>
+                </div>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- Common Navigation Links -->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Mainpage">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+
+                        <!-- Conditional Navigation for Roles -->
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageBooks">Manage Books</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Manage Categories</a>
+                            </li>
+                        }
+                        else if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Categories">Categories</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Cart">Cart</a>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <input type="text" id="searchBox" placeholder="Search for books..." autocomplete="off" />
+                        <div id="searchResults" class="search-results"></div>
+                    </div>
+
+
+                    <!-- Login/Logout -->
+                    <ul class="navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark">Hello, @User.Identity.Name!</span>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Mainpage", "Customer")">
+                                    <button class="nav-link btn btn-link text-dark" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - EbookStore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+                   $(document).ready(function () {
+            $('#searchBar').on('input', function () {
+                const searchTerm = $(this).val();
+                if (searchTerm.length > 0) {
+                    $.ajax({
+                        url: '/Book/SearchBooks', 
+                        method: 'GET',
+                        data: { searchTerm: searchTerm },
+                        success: function (data) {
+                            $('#searchResults').empty();
+                            if (data.length > 0) {
+                                data.forEach(book => {
+                                    $('#searchResults').append(
+                                        `<div class="result-item" onclick="viewBookDetails(${book.id})">${book.title}</div>`
+                                    );
+                                });
+                            } else {
+                                $('#searchResults').append('<div class="result-item">No books found</div>');
+                            }
+                        },
+                        error: function (error) {
+                            console.error('Error fetching search results:', error);
+                        }
+                    });
+                } else {
+                    $('#searchResults').empty();
+                }
+            });
+        });
+
+        function viewBookDetails(id) {
+            window.location.href = `/Book/BookDetails/${id}`; 
+        }
+
+    </script>
+
+</body>
+</html>

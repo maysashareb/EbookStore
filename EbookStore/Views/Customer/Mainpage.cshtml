@@ -1,0 +1,140 @@
+﻿@model IEnumerable<EbookStore.Models.Book>
+
+@* @{ *@
+@*     ViewBag.Title = "Home"; *@
+@* } *@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/Mainpagecss.css" asp-append-version="true" />
+
+    <title>Booktopia</title>
+   
+</head>
+<body>
+    <!-- Video Section -->
+    <div class="video-container">
+        <div class="video-content">
+            <h1>E-Book Heaven</h1>
+            <p>Dive into a universe where every page is an adventure!</p>
+            <a href="#" class="explore-btn">Explore Now</a>
+        </div>
+
+        <video autoplay muted loop class="background-video">
+            <source src="~/Content/videoplayback.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Marquee Section -->
+    <div class="marquee">
+        <span>"Buy or borrow your favorite e-books and explore endless adventures at unbeatable prices!"</span>
+    </div>
+
+  
+    <!-- Browse by Category Section -->
+    <div class="latest-buzz">
+        @if (ViewBag.Categories != null)
+        {
+            foreach (var category in ViewBag.Categories)
+            {
+                <div class="latest-buzz-item">
+                    <img src="@category.Image" alt="@category.Name" />
+                    <div class="description">
+                        <h3>@category.Name</h3>
+                        <p>Explore the best books in the @category.Name category.</p>
+                        <a href="#" class="browse-btn">Browse</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No categories available.</p>
+        }
+    </div>
+
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+            <div class="question">How do I borrow a book? <span class="arrow">▼</span></div>
+            <div class="faq-answer">You can borrow a book by visiting our library and selecting the title you'd like to borrow.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="question">What payment methods are accepted? <span class="arrow">▼</span></div>
+            <div class="faq-answer">We accept credit/debit cards, PayPal.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="question">Can I return borrowed books? <span class="arrow">▼</span></div>
+            <div class="faq-answer">Yes, just return them within 30 days!</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="question">Are there any late fees? <span class="arrow">▼</span></div>
+            <div class="faq-answer">Yes, late fees apply if books are not returned by the due date.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="question">How do I contact support? <span class="arrow">▼</span></div>
+            <div class="faq-answer">You can contact support through our website's contact form or via email at support@booktopia.com.</div>
+        </div>
+    </div>
+
+    <script>
+        // Get all FAQ items
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Toggle active class on the clicked FAQ item
+                item.classList.toggle('active');
+            });
+        });</script>
+
+
+
+    <div class="ebooks-section">
+        <h2>Latest-Buzz</h2>
+        <div class="ebooks-grid">
+            @foreach (var book in ViewBag.Books)
+            {
+                <div class="ebook-item">
+                    <img src="@Url.Content(book.ImageUrl)" alt="@book.Title" />
+                    <div class="ebook-details">
+                        <h3>@book.Title</h3>
+                        <p>@book.Description</p>
+                        <p>Price: @book.Price.ToString("C")</p>
+                        <button class="buy-btn">Buy Now</button>
+                     
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+        <h2>GET IN TOUCH!</h2>
+        <form class="contact-form" action="/Contact/Send" method="post">
+            <div class="form-row1">
+                <input type="text" name="Name" placeholder="Name" required />
+            </div>
+            <div class="form-row2">
+                <input type="email" name="Email" placeholder="Email" required />
+            </div>
+            <textarea name="Message" placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit">Send It!</button>
+        </form>
+    </div>
+
+
+</body>
+</html>

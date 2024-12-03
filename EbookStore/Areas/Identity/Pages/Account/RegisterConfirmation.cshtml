@@ -1,0 +1,33 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Account Registration Confirmation";
+}
+
+<h1 class="text-success">@ViewData["Title"]</h1>
+
+@if (Model.DisplayConfirmAccountLink)
+{
+    <p>
+        Thank you for registering! Since this application is in development mode, please use the link below to confirm your account:
+    </p>
+    <p>
+        <a id="confirm-link" class="btn btn-primary" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
+    </p>
+    <p>
+        When deploying to production, please ensure a real email sender is configured. For more information, see <a href="https://aka.ms/aspaccountconf" target="_blank">these docs</a>.
+    </p>
+}
+else
+{
+    <p>
+        Thank you for registering! A confirmation email has been sent to <strong>@Model.Email</strong>. Please check your inbox and click the link to activate your account.
+    </p>
+    <p>
+        If you do not receive the email within a few minutes, check your spam or junk folder. If the problem persists, please <a href="/Account/ContactSupport">contact support</a>.
+    </p>
+}
+
+<p>
+    <a class="btn btn-secondary" href="/">Return to Home</a>
+</p>

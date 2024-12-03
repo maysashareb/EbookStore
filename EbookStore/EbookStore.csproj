@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-EbookStore-8d8dc70f-3bc7-413e-9f92-0a563c111a8f</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Content\advanture.jpg" />
+    <None Include="wwwroot\Content\fantasy.jpg" />
+    <None Include="wwwroot\Content\howls.jpg" />
+    <None Include="wwwroot\Content\kids.jpg" />
+    <None Include="wwwroot\Content\nikkis big weekend.jpg" />
+    <None Include="wwwroot\Content\romance.jpg" />
+    <None Include="wwwroot\Content\thrilling advanture.jpg" />
+    <None Include="wwwroot\Content\two sides.jpg" />
+    <None Include="wwwroot\Content\videoplayback.mp4" />
+    <None Include="wwwroot\Content\worldvoyage.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>

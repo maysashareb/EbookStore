@@ -1,0 +1,25 @@
+﻿@model IEnumerable<EbookStore.Models.Book>
+
+<h2>Books</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.Description</td>
+                <td>@book.Price</td>
+                <td>@book.Category?.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>

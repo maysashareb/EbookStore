@@ -1,0 +1,12 @@
+﻿@model EbookStore.Models.Book
+
+<h1>@Model.Title</h1>
+
+
+
+<div class="container">
+    <h1>@Model.Title</h1>
+    <p>@Model.Description</p>
+    <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+    <button class="btn btn-primary">Buy Now</button>
+</div>

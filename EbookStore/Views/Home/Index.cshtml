@@ -1,0 +1,579 @@
+﻿@* @model IEnumerable<EbookStore.Models.Book> *@
+
+@* @{ *@
+@*     ViewBag.Title = "Home"; *@
+@* } *@
+@* <!DOCTYPE html> *@
+@* <html lang="en"> *@
+@* <head> *@
+@*     <meta charset="UTF-8"> *@
+@*     <meta name="viewport" content="width=device-width, initial-scale=1.0"> *@
+@*     <title>Booktopia</title> *@
+@*     <style> *@
+@*                 body, html { *@
+@*                     margin: 0; *@
+@*                     padding: 0; *@
+@*                     font-family: Arial, sans-serif; *@
+@*                     box-sizing: border-box; *@
+@*                     overflow-x: hidden; *@
+@*                 } *@
+
+@*                 /* Marquee Section */ *@
+@*         .marquee { *@
+@*             width: 100%; *@
+@*             overflow: hidden; *@
+@*             white-space: nowrap; *@
+@*             background-color: #e64a19; *@
+@*             color: white; *@
+@*             padding: 20px 0; *@
+@*             text-align: center; *@
+@*             font-weight: bold; *@
+@*             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); *@
+@*         } *@
+
+@*                 .marquee span { *@
+@*                     display: inline-block; *@
+@*                     padding-left: 100%; *@
+@*                     animation: marquee-scroll 10s linear infinite; *@
+@*                 } *@
+
+@*                @@keyframes marquee-scroll { *@
+@*             from { *@
+@*                 transform: translateX(0); *@
+@*             } *@
+@*             to { *@
+@*                 transform: translateX(-100%); *@
+@*             } *@
+@*         } *@
+
+@*                 /* Video Container */ *@
+@*                 .video-container { *@
+@*                     position: relative; *@
+@*                     height: 100vh; *@
+@*                     overflow: hidden; *@
+@*                 } *@
+
+@*                 .background-video { *@
+@*                     position: absolute; *@
+@*                     top: 0; *@
+@*                     left: 0; *@
+@*                     width: 100vw; *@
+@*                     height: 100vh; *@
+@*                     object-fit: cover; *@
+@*                     z-index: -2; *@
+@*                 } *@
+
+@*                 .video-content { *@
+@*                     position: absolute; *@
+@*                     top: 50%; *@
+@*                     left: 50%; *@
+@*                     transform: translate(-50%, -50%); *@
+@*                     text-align: center; *@
+@*                     color: white; *@
+@*                     z-index: 2; *@
+@*                 } *@
+
+@*                     .video-content h1 { *@
+@*                         font-size: 3em; *@
+@*                         margin-bottom: 10px; *@
+@*                     } *@
+
+@*                     .video-content p { *@
+@*                         font-size: 1.2em; *@
+@*                         margin-bottom: 20px; *@
+@*                     } *@
+
+@*                     .video-content .explore-btn { *@
+@*                         display: inline-block; *@
+@*                         background-color: transparent; *@
+@*                         border: 2px solid #fff; *@
+@*                         padding: 10px 20px; *@
+@*                         color: #fff; *@
+@*                         text-decoration: none; *@
+@*                         border-radius: 20px; *@
+@*                         font-weight: bold; *@
+@*                         transition: 0.3s; *@
+@*                     } *@
+
+@*                         .video-content .explore-btn:hover { *@
+@*                             background-color: #fff; *@
+@*                             color: #000; *@
+@*                         } *@
+@*         /* Latest Buzz Section */ *@
+@*         .latest-buzz { *@
+@*             display: flex; *@
+@*             justify-content: space-between; *@
+@*             flex-wrap: wrap; *@
+@*             gap: 20px; *@
+@*             padding: 50px 20px; *@
+@*             margin-top: 30px; *@
+@*         } *@
+
+@*         .latest-buzz-item { *@
+@*             width: calc(25% - 20px); *@
+@*             background-color: #fff; *@
+@*             border-radius: 15px; *@
+@*             overflow: hidden; *@
+@*             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); *@
+@*             transition: transform 0.3s ease-in-out; *@
+@*         } *@
+
+@*         .latest-buzz-title { *@
+@*             text-align: center; *@
+@*             font-size: 2em; *@
+@*             font-weight: bold; *@
+@*             margin: 20px 0; *@
+@*             color: black; *@
+@*             text-transform: uppercase; *@
+@*         } *@
+
+@*         .latest-buzz-item:hover { *@
+@*             transform: translateY(-10px); *@
+@*         } *@
+
+@*         .latest-buzz-item img { *@
+@*             width: 100%; *@
+@*             height: 200px; *@
+@*             object-fit: cover; *@
+@*             border-bottom: 1px solid #ddd; *@
+@*         } *@
+
+@*         .latest-buzz-item .description { *@
+@*             padding: 20px; *@
+@*             text-align: center; *@
+@*         } *@
+
+@*             .latest-buzz-item .description h3 { *@
+@*                 font-size: 1.2em; *@
+@*                 margin-top: 10px; *@
+@*                 color: #333; *@
+@*             } *@
+
+@*             .latest-buzz-item .description p { *@
+@*                 font-size: 1em; *@
+@*                 color: #555; *@
+@*                 margin: 10px 0; *@
+@*             } *@
+
+@*         .latest-buzz-item .browse-btn { *@
+@*             display: inline-block; *@
+@*             background-color: #FF6F00; *@
+@*             color: white; *@
+@*             padding: 10px 20px; *@
+@*             text-decoration: none; *@
+@*             margin-top: 10px; *@
+@*             border-radius: 20px; *@
+@*             font-weight: bold; *@
+@*             transition: all 0.3s ease; *@
+@*         } *@
+
+@*             .latest-buzz-item .browse-btn:hover { *@
+@*                 background-color: #FF3D00; *@
+@*                 box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); *@
+@*                 transform: translateY(-2px); *@
+@*             } *@
+
+@*             .latest-buzz-item .browse-btn:active { *@
+@*                 transform: translateY(0); *@
+@*             } *@
+
+@*         .faq-section { *@
+@*             background-color: #FFF9E6; *@
+@*             padding: 50px 20px; *@
+@*             text-align: center; *@
+@*         } *@
+
+@*             .faq-section h2 { *@
+@*                 font-size: 2.2em; *@
+@*                 font-weight: bold; *@
+@*                 margin-bottom: 30px; *@
+@*                 color: #333; *@
+@*                 text-transform: uppercase; *@
+@*             } *@
+
+@*         .faq-item { *@
+@*             background-color: white; *@
+@*             border: none; *@
+@*             margin-bottom: 15px; *@
+@*             padding: 15px 20px; *@
+@*             cursor: pointer; *@
+@*             text-align: left; *@
+@*             border-radius: 10px; *@
+@*             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); *@
+@*             transition: box-shadow 0.3s ease, background-color 0.3s ease; *@
+@*         } *@
+
+@*             .faq-item:hover { *@
+@*                 background-color: #FFFBF2; *@
+@*                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); *@
+@*             } *@
+
+@*         .faq-answer { *@
+@*             display: none; *@
+@*             padding: 15px 20px; *@
+@*             font-size: 1em; *@
+@*             background-color: #FFFFFF; *@
+@*             border-radius: 8px; *@
+@*             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); *@
+@*             margin-top: 10px; *@
+@*             color: #555; *@
+@*         } *@
+
+@*         .faq-item.active .faq-answer { *@
+@*             display: block; *@
+@*         } *@
+
+@*         .faq-item .arrow { *@
+@*             float: right; *@
+@*             font-size: 1.2em; *@
+@*             color: #666; *@
+@*             transition: transform 0.3s ease, color 0.3s ease; *@
+@*         } *@
+
+@*         .faq-item:hover .arrow { *@
+@*             color: #FF6F00; *@
+@*         } *@
+
+@*         .faq-item.active .arrow { *@
+@*             transform: rotate(180deg); *@
+@*             color: #FF6F00; *@
+@*         } *@
+@*         .subscribe-section { *@
+@*             background-color: #FDCB01; *@
+@*             text-align: center; *@
+@*             padding: 40px 20px; *@
+@*             color: #000; *@
+@*         } *@
+
+@*             .subscribe-section h3 { *@
+@*                 font-size: 2em; *@
+@*                 font-weight: bold; *@
+@*                 margin-bottom: 20px; *@
+@*             } *@
+
+@*         .subscribe-form { *@
+@*             display: flex; *@
+@*             justify-content: center; *@
+@*             align-items: center; *@
+@*             gap: 10px; *@
+@*         } *@
+
+@*             .subscribe-form input { *@
+@*                 width: 300px; *@
+@*                 padding: 10px 15px; *@
+@*                 border-radius: 20px; *@
+@*                 border: none; *@
+@*                 font-size: 1em; *@
+@*                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); *@
+@*                 outline: none; *@
+@*             } *@
+
+@*             .subscribe-form button { *@
+@*                 padding: 10px 20px; *@
+@*                 background-color: #FF6F00; *@
+@*                 color: #fff; *@
+@*                 border: none; *@
+@*                 border-radius: 20px; *@
+@*                 font-size: 1em; *@
+@*                 font-weight: bold; *@
+@*                 cursor: pointer; *@
+@*                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); *@
+@*                 transition: background-color 0.3s ease, box-shadow 0.3s ease; *@
+@*             } *@
+
+@*                 .subscribe-form button:hover { *@
+@*                     background-color: #FF3D00; *@
+@*                     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); *@
+@*                 } *@
+@*         .ebooks-section { *@
+@*             background-color: white; *@
+@*             padding: 50px 20px; *@
+@*             text-align: center; *@
+@*         } *@
+
+@*             .ebooks-section h2 { *@
+@*                 font-size: 2.5em; *@
+@*                 font-weight: bold; *@
+@*                 margin-bottom: 30px; *@
+@*                 color: #333; *@
+@*             } *@
+
+@*         .ebooks-grid { *@
+@*             display: grid; *@
+@*             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); *@
+@*             gap: 20px; *@
+@*             justify-items: center; *@
+@*         } *@
+
+@*         .ebook-item { *@
+@*             background-color: #FFFFFF; *@
+@*             border-radius: 15px; *@
+@*             overflow: hidden; *@
+@*             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); *@
+@*             text-align: left; *@
+@*             transition: transform 0.3s ease, box-shadow 0.3s ease; *@
+@*         } *@
+
+@*             .ebook-item:hover { *@
+@*                 transform: translateY(-10px); *@
+@*                 box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); *@
+@*             } *@
+
+@*             .ebook-item img { *@
+@*                 width: 100%; *@
+@*                 height: 300px; /* Increased height */ *@
+@*                 object-fit: cover; *@
+@*             } *@
+
+@*         .ebook-details { *@
+@*             padding: 20px; *@
+@*         } *@
+
+@*             .ebook-details h3 { *@
+@*                 font-size: 1.4em; *@
+@*                 margin-bottom: 10px; *@
+@*                 color: #333; *@
+@*             } *@
+
+@*             .ebook-details p { *@
+@*                 font-size: 1em; *@
+@*                 color: #666; *@
+@*                 margin-bottom: 10px; *@
+@*             } *@
+
+@*         .buy-btn, *@
+@*         .borrow-btn { *@
+@*             background-color: #FF6F00; *@
+@*             color: #fff; *@
+@*             padding: 10px 20px; *@
+@*             border: none; *@
+@*             border-radius: 20px; *@
+@*             font-size: 1em; *@
+@*             font-weight: bold; *@
+@*             cursor: pointer; *@
+@*             transition: background-color 0.3s ease, transform 0.3s ease; *@
+@*             margin: 8px; *@
+@*             display: inline-block; *@
+@*         } *@
+
+@*             .buy-btn:hover, *@
+@*             .borrow-btn:hover { *@
+@*                 background-color: #FF3D00; *@
+@*                 transform: scale(1.1); *@
+@*             } *@
+
+@*         .contact-section { *@
+@*             background-color: #FFF9E6; *@
+@*             padding: 60px 20px; *@
+@*             text-align: center; *@
+@*             border-radius: 20px; *@
+@*             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); *@
+@*         } *@
+
+@*             .contact-section h2 { *@
+@*                 font-size: 2.5em; *@
+@*                 font-weight: bold; *@
+@*                 color: #333; *@
+@*                 margin-bottom: 30px; *@
+@*                 text-transform: uppercase; *@
+@*             } *@
+
+@*         .contact-form { *@
+@*             max-width: 600px; *@
+@*             margin: 0 auto; *@
+@*             display: flex; *@
+@*             flex-direction: column; *@
+@*             gap: 20px; *@
+@*         } *@
+
+@*         .form-row { *@
+@*             display: flex; *@
+@*             flex-wrap: wrap; *@
+@*             gap: 15px; *@
+@*         } *@
+
+@*         .contact-form input{ *@
+@*             width: 100%; *@
+@*             padding: 15px; *@
+@*             font-size: 1em; *@
+@*             border-radius: 30px; *@
+@*             border: 1px solid #ddd; *@
+@*             outline: none; *@
+@*             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); *@
+@*             transition: box-shadow 0.3s ease, border-color 0.3s ease; *@
+@*         } *@
+
+@*         .form-row input { *@
+@*             flex: 1; *@
+@*         } *@
+
+@*         .contact-form textarea { *@
+@*             width: 100%; *@
+@*             padding: 15px 20px; *@
+@*             font-size: 1em; *@
+@*             border-radius: 50px; *@
+@*             border: 1px solid #ddd; *@
+@*             outline: none; *@
+@*             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); *@
+@*             transition: box-shadow 0.3s ease, border-color 0.3s ease; *@
+@*             resize:horizontal; *@
+@*             height: 60px; *@
+@*             box-sizing: border-box; *@
+@*         } *@
+
+@*             .contact-form textarea:focus { *@
+@*                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); *@
+@*                 border-color: #FF6F00; *@
+@*             } *@
+
+@*             .contact-form input:focus *@
+@*              { *@
+@*                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); *@
+@*                 border-color: #FF6F00; *@
+@*             } *@
+
+@*         .contact-form button { *@
+@*             padding: 15px 30px; *@
+@*             font-size: 1.2em; *@
+@*             color: white; *@
+@*             background-color: #FF6F00; *@
+@*             border: none; *@
+@*             border-radius: 30px; *@
+@*             cursor: pointer; *@
+@*             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); *@
+@*             transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; *@
+@*         } *@
+
+@*             .contact-form button:hover { *@
+@*                 background-color: #FF3D00; *@
+@*                 box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); *@
+@*                 transform: translateY(-2px); *@
+@*             } *@
+
+@*             .contact-form button:active { *@
+@*                 transform: translateY(0); *@
+@*             } *@
+
+@*     </style> *@
+@* </head> *@
+@* <body> *@
+@*     <!-- Video Section --> *@
+@*     <div class="video-container"> *@
+@*         <div class="video-content"> *@
+@*             <h1>E-Book Heaven</h1> *@
+@*             <p>Dive into a universe where every page is an adventure!</p> *@
+@*             <a href="#" class="explore-btn">Explore Now</a> *@
+@*         </div> *@
+
+@*         <video autoplay muted loop class="background-video"> *@
+@*             <source src="~/Content/videoplayback.mp4" type="video/mp4"> *@
+@*             Your browser does not support the video tag. *@
+@*         </video> *@
+@*     </div> *@
+
+@*     <!-- Marquee Section --> *@
+@*     <div class="marquee"> *@
+@*         <span>"Buy or borrow your favorite e-books and explore endless adventures at unbeatable prices!"</span> *@
+@*     </div> *@
+
+@*     <!-- Browse by Category Section --> *@
+@*     <div class="latest-buzz-title"> *@
+@*         Browse by Category *@
+@*     </div> *@
+@*     <div class="latest-buzz"> *@
+@*         @foreach (var category in ViewBag.Categories) *@
+@*         { *@
+@*             <div class="latest-buzz-item"> *@
+@*                 <img src="@Url.Content(category.ImageUrl)" alt="@category.Name" /> *@
+@*                 <div class="description"> *@
+@*                     <h3>@category.Name</h3> *@
+@*                     <p>Explore the best books in the @category.Name category.</p> *@
+@*                     <a href="#" class="browse-btn">Browse</a> *@
+@*                 </div> *@
+@*             </div> *@
+@*         } *@
+@*     </div> *@
+
+
+@*     <!-- FAQ Section --> *@
+@*     <div class="faq-section"> *@
+@*         <h2>Frequently Asked Questions</h2> *@
+
+@*         <div class="faq-item"> *@
+@*             <div class="question">How do I borrow a book? <span class="arrow">▼</span></div> *@
+@*             <div class="faq-answer">You can borrow a book by visiting our library and selecting the title you'd like to borrow.</div> *@
+@*         </div> *@
+
+@*         <div class="faq-item"> *@
+@*             <div class="question">What payment methods are accepted? <span class="arrow">▼</span></div> *@
+@*             <div class="faq-answer">We accept credit/debit cards, PayPal.</div> *@
+@*         </div> *@
+
+@*         <div class="faq-item"> *@
+@*             <div class="question">Can I return borrowed books? <span class="arrow">▼</span></div> *@
+@*             <div class="faq-answer">Yes, just return them within 30 days!</div> *@
+@*         </div> *@
+
+@*         <div class="faq-item"> *@
+@*             <div class="question">Are there any late fees? <span class="arrow">▼</span></div> *@
+@*             <div class="faq-answer">Yes, late fees apply if books are not returned by the due date.</div> *@
+@*         </div> *@
+
+@*         <div class="faq-item"> *@
+@*             <div class="question">How do I contact support? <span class="arrow">▼</span></div> *@
+@*             <div class="faq-answer">You can contact support through our website's contact form or via email at support@booktopia.com.</div> *@
+@*         </div> *@
+@*     </div> *@
+
+@*     <script> *@
+@*         // Get all FAQ items *@
+@*         const faqItems = document.querySelectorAll('.faq-item'); *@
+
+@*         faqItems.forEach(item => { *@
+@*             item.addEventListener('click', () => { *@
+@*                 // Toggle active class on the clicked FAQ item *@
+@*                 item.classList.toggle('active'); *@
+@*             }); *@
+@*         });</script> *@
+
+
+
+@*     <div class="ebooks-section"> *@
+@*         <h2>Latest-Buzz</h2> *@
+@*         <div class="ebooks-grid"> *@
+@*             @foreach (var book in ViewBag.Books) *@
+@*             { *@
+@*                 <div class="ebook-item"> *@
+@*                     <img src="@Url.Content(book.ImageUrl)" alt="@book.Title" /> *@
+@*                     <div class="ebook-details"> *@
+@*                         <h3>@book.Title</h3> *@
+@*                         <p>@book.Description</p> *@
+@*                         <p>Price: @book.Price.ToString("C")</p> *@
+@*                         <button class="buy-btn">Buy Now</button> *@
+@*                         <button class="borrow-btn">Borrow Now</button> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             } *@
+@*         </div> *@
+@*     </div> *@
+
+
+@*     <!-- Contact Section --> *@
+@*     <div class="contact-section"> *@
+@*         <h2>Get in Touch!</h2> *@
+@*         @if (TempData["Success"] != null) *@
+@*         { *@
+@*             <div class="alert alert-success">@TempData["Success"]</div> *@
+@*         } *@
+@*         <form action="/Contact/Send" method="post" class="contact-form"> *@
+@*             <div class="form-row"> *@
+@*                 <input type="text" name="Name" placeholder="Name" required /> *@
+@*                 <input type="email" name="Email" placeholder="Email" required /> *@
+@*             </div> *@
+@*             <textarea name="Message" placeholder="Your Message" rows="5" required></textarea> *@
+@*             <button type="submit">Send It!</button> *@
+@*         </form> *@
+@*     </div> *@
+
+@* </body> *@
+@* </html> *@

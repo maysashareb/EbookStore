@@ -20,26 +20,51 @@ html {
 body {
   margin-bottom: 60px;
 }
-.search-results {
+.search-container {
+    margin: 20px auto;
+    max-width: 600px;
+    position: relative;
+}
+
+#search-field {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#search-results {
     position: absolute;
-    background: white;
-    border: 1px solid #ccc;
-    max-width: 400px;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 300px;
+    overflow-y: auto;
     z-index: 1000;
-    margin-top: 5px;
-    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.result-item {
+.search-result-item {
     padding: 10px;
-    cursor: pointer;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-    .result-item:last-child {
+    .search-result-item:last-child {
         border-bottom: none;
     }
 
-    .result-item:hover {
-        background-color: #f0f0f0;
+    .search-result-item h5 {
+        margin: 0 0 5px;
+    }
+
+    .search-result-item p {
+        margin: 0 0 5px;
+    }
+
+    .search-result-item a {
+        display: inline-block;
+        margin-top: 5px;
     }

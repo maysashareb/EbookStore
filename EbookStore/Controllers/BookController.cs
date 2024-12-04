@@ -23,6 +23,16 @@ namespace EbookStore.Controllers
         {
             var books = _context.Books.ToList();
             return View(books);
+
+            var booksOnSale = _context.Books
+        .Where(b => b.DiscountPrice.HasValue && b.DiscountEndDate >= DateTime.Now)
+        .ToList();
+
+            var allBooks = _context.Books.ToList();
+
+            ViewBag.Books = allBooks;
+            ViewBag.DiscountedBooks = booksOnSale;
+
         }
 
         // Display details of a specific book
@@ -90,17 +100,26 @@ namespace EbookStore.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Book/SearchBooks
         [HttpGet]
-        public JsonResult SearchBooks(string searchTerm)
+        public JsonResult SearchBooks(string query)
         {
             var books = _context.Books
-                .Where(b => b.Title.Contains(searchTerm)) // Searches by title
-                .Select(b => new { b.Id, b.Title }) // Return only necessary fields
+                .Where(b =>
+                    b.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    b.Author.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    b.Publisher.Contains(query, StringComparison.OrdinalIgnoreCase))
+                .Select(b => new
+                {
+                    b.Id,
+                    b.Title,
+                    b.Author,
+                    b.Publisher
+                })
                 .ToList();
 
             return Json(books);
         }
+
 
         // GET: /Book/BookDetails/{id}
         public IActionResult BookDetails(int id)

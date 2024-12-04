@@ -33,8 +33,8 @@ public class CustomerController : Controller
     private List<Book> GetLatestBooks(int count)
     {
         return _context.Books
-            .OrderByDescending(b => b.CreatedDate) // Order by the latest created date
-            .Take(count) // Get the latest 'count' books
+            .OrderByDescending(b => b.CreatedDate) 
+            .Take(count) 
             .ToList();
     }
 }

@@ -25,10 +25,13 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         modelBuilder.Entity<Book>()
             .Property(b => b.CreatedDate)
             .HasDefaultValueSql("GETDATE()");
-         
-        
+        modelBuilder.Entity<Book>()
+     .Property(b => b.DiscountPrice)
+     .HasColumnType("decimal(18,2)"); 
+
+
         modelBuilder.Entity<Book>()
             .Property(b => b.Price)
-            .HasPrecision(18, 2); // Example: Precision=18, Scale=2
+            .HasPrecision(18, 2); 
     }
 }

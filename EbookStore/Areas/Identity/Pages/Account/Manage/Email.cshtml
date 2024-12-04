@@ -1,0 +1,69 @@
+﻿@page
+@model EmailModel
+@{
+    ViewData["Title"] = "Manage Email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/Email.css" asp-append-version="true" />
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-content">
+          
+            <!-- Main Content Section -->
+            <main class="profile-main">
+                <h3>@ViewData["Title"]</h3>
+                <partial name="_StatusMessage" for="StatusMessage" />
+                <form id="email-form" method="post">
+                    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+
+                    <!-- Email Address Section -->
+                    @if (Model.IsEmailConfirmed)
+                    {
+                        <div class="form-floating mb-3 input-group">
+                            <input asp-for="Email" class="form-control" placeholder="Email" disabled />
+                            <div class="input-group-append">
+                                <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
+                            </div>
+                            <label asp-for="Email">Email</label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" placeholder="Email" disabled />
+                            <label asp-for="Email">Email</label>
+                            <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
+                        </div>
+                    }
+
+                    <!-- New Email Section -->
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.NewEmail" class="form-control" placeholder="New Email" autocomplete="email" aria-required="true" />
+                        <label asp-for="Input.NewEmail">New Email</label>
+                        <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-custom">Change email</button>
+                </form>
+            </main>
+            <!-- Sidebar Section -->
+            <aside class="profile-sidebar">
+                <h3>Manage your account</h3>
+                <ul class="profile-nav">
+                    <li><a asp-page="./Index" class="@ManageNavPages.IndexNavClass(ViewContext)">Profile</a></li>
+                    <li><a asp-page="./Email" class="@ManageNavPages.EmailNavClass(ViewContext)">Email</a></li>
+                    <li><a asp-page="./ChangePassword" class="@ManageNavPages.ChangePasswordNavClass(ViewContext)">Password</a></li>
+                    <li><a asp-page="./PersonalData" class="@ManageNavPages.PersonalDataNavClass(ViewContext)">Personal data</a></li>
+                </ul>
+            </aside>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

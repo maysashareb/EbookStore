@@ -11,6 +11,13 @@
         public int Quantity { get; set; }
         public Category? Category { get; set; }
         public DateTime CreatedDate { get; set; } // Field to track creation date
+        public string? Author { get; set; }
+        public string? Publisher { get; set; }
+        public bool IsDiscounted { get; set; }
+        public DateTime? DiscountEndDate { get; set; }
+        public decimal? DiscountPrice { get; set; }
+
+
 
     }
 }

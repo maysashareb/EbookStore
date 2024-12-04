@@ -10,7 +10,22 @@ namespace EbookStore.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+       
+            // Add the new columns instead of recreating the table
+            migrationBuilder.AddColumn<string>(
+                name: "Author",
+                table: "Books",
+                type: "nvarchar(255)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Publisher",
+                table: "Books",
+                type: "nvarchar(255)",
+                nullable: true);
+        
+
+        migrationBuilder.CreateTable(
                 name: "Books",
                 columns: table => new
                 {
@@ -51,6 +66,14 @@ namespace EbookStore.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropColumn(
+       name: "Author",
+       table: "Books");
+
+            migrationBuilder.DropColumn(
+                name: "Publisher",
+                table: "Books");
         }
     }
 }

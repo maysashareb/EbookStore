@@ -381,3 +381,92 @@ body, html {
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
             transform: translateY(-2px);
         }
+.sales-section {
+    padding: 40px;
+    background-color: #fdf6ec;
+    text-align: center;
+}
+
+    .sales-section h2 {
+        font-size: 2.5rem;
+        color: #ff6f00;
+        margin-bottom: 20px;
+    }
+
+.sales-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Reduced min-width */
+    gap: 10px; /* Reduced gap between items */
+    justify-items: center;
+}
+
+.sales-item{
+background-color: #FFFFFF;
+border-radius: 15px;
+overflow: hidden;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+text-align: left;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+padding: 10px; /* Reduced padding inside the card */
+}
+
+.sales-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+    .sales-item img {
+        width: 100%;
+        height: 250px; /* Reduced height */
+        object-fit: cover;
+    }
+.sales-details {
+    padding: 10px;
+}
+
+.price-container {
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #ff0000;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.discounted-price {
+    color: #28a745;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.discount-date {
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+.buy-btn {
+    background-color: #FF6F00;
+    color: #fff;
+    padding: 8px 16px; /* Reduced padding */
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9em; /* Reduced font size */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin: 5px; /* Reduced margin between buttons */
+    display: inline-block;
+}
+
+    .buy-btn:hover {
+        background-color: #FF3D00;
+        transform: scale(1.1);
+    }

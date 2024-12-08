@@ -20,26 +20,127 @@ html {
 body {
   margin-bottom: 60px;
 }
-.search-results {
+.search-container {
+    margin: 20px auto;
+    max-width: 600px;
+    position: relative;
+}
+
+#search-field {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#search-results {
     position: absolute;
-    background: white;
-    border: 1px solid #ccc;
-    max-width: 400px;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 300px;
+    overflow-y: auto;
     z-index: 1000;
-    margin-top: 5px;
-    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.result-item {
+.search-result-item {
     padding: 10px;
-    cursor: pointer;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-    .result-item:last-child {
+    .search-result-item:last-child {
         border-bottom: none;
     }
 
-    .result-item:hover {
-        background-color: #f0f0f0;
+    .search-result-item h5 {
+        margin: 0 0 5px;
     }
+
+    .search-result-item p {
+        margin: 0 0 5px;
+    }
+
+    .search-result-item a {
+        display: inline-block;
+        margin-top: 5px;
+    }
+/* Modal Content Styling */
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Modal Header */
+.modal-header {
+    background-color: #4a90e2; /* Cool Blue */
+    color: white;
+    padding: 15px 20px;
+    border-bottom: none;
+}
+
+    .modal-header .btn-close {
+        color: white;
+        opacity: 0.8;
+        font-size: 1.2rem;
+    }
+
+        .modal-header .btn-close:hover {
+            opacity: 1;
+        }
+
+/* Modal Body */
+.modal-body {
+    padding: 20px;
+    text-align: center;
+}
+
+    .modal-body p {
+        font-size: 1.2rem;
+        color: #333;
+    }
+
+    /* Buttons in Modal */
+    .modal-body .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .modal-body .btn-primary {
+        background-color: #28a745; /* Green */
+        color: white;
+        border: none;
+    }
+
+        .modal-body .btn-primary:hover {
+            background-color: #218838;
+        }
+
+    .modal-body .btn-secondary {
+        background-color: #ff6f00; /* Orange */
+        color: white;
+        border: none;
+    }
+
+        .modal-body .btn-secondary:hover {
+            background-color: #e65c00;
+        }
+
+/* Modal Transition and Animation */
+.modal.fade .modal-dialog {
+    transform: translateY(-50px);
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+}

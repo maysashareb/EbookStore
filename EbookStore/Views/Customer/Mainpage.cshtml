@@ -1,8 +1,9 @@
 ﻿@model IEnumerable<EbookStore.Models.Book>
 
-@* @{ *@
-@*     ViewBag.Title = "Home"; *@
-@* } *@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Home";
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,6 +32,42 @@
     <!-- Marquee Section -->
     <div class="marquee">
         <span>"Buy or borrow your favorite e-books and explore endless adventures at unbeatable prices!"</span>
+    </div>
+    <!-- Sales Section -->
+    <div class="sales-section">
+        <h2>On Sale Now!</h2>
+        <div class="sales-grid">
+            @if (ViewBag.DiscountedBooks != null)
+            {
+                foreach (var book in ViewBag.DiscountedBooks)
+                {
+                    <div class="sales-item">
+                        <img src="@book.ImageUrl" alt="@book.Title" />
+                        <div class="sales-details">
+                            <h3>@book.Title</h3>
+                            <p>@book.Description</p>
+                            <div class="price-container">
+                                <span class="original-price">@book.Price.ToString("C")</span>
+                                <span class="discounted-price">@book.DiscountPrice?.ToString("C")</span>
+                            </div>
+                            <p class="discount-date">Discount ends: @book.DiscountEndDate?.ToString("MM/dd/yyyy")</p>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <button class="buy-btn">Buy Now</button>
+                            }
+                            else
+                            {
+                                <button class="buy-btn " onclick="showLoginMessage()">Buy Now</button>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No discounted books available right now. Check back later!</p>
+            }
+        </div>
     </div>
 
   
@@ -111,7 +148,14 @@
                         <h3>@book.Title</h3>
                         <p>@book.Description</p>
                         <p>Price: @book.Price.ToString("C")</p>
-                        <button class="buy-btn">Buy Now</button>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <button class="buy-btn">Buy Now</button>
+                        }
+                        else
+                        {
+                            <button class="buy-btn" onclick="showLoginMessage()">Buy Now</button>
+                        }
                      
                     </div>
                 </div>

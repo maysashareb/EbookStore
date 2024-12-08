@@ -1,0 +1,104 @@
+﻿@section Scripts {
+    <script>
+        console.log("Admin Home");
+    </script>
+}
+
+<div class="container py-5">
+    <h1 class="text-orange mb-5 text-center">Welcome to the Admin Dashboard</h1>
+    <div class="row g-4">
+        <!-- Orders Card -->
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="fas fa-shopping-cart fa-3x text-orange mb-3"></i>
+                    <h5 class="card-title">Orders</h5>
+                    <p class="card-text">Manage and track all customer orders efficiently.</p>
+                    <a asp-action="Orders" asp-controller="Admin" class="btn btn-orange">Manage Orders</a>
+                </div>
+            </div>
+        </div>
+        <!-- Customers Card -->
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-orange mb-3"></i>
+                    <h5 class="card-title">Customers</h5>
+                    <p class="card-text">View and manage all registered customers.</p>
+                    <a asp-action="Customers" asp-controller="Admin" class="btn btn-orange">Manage Customers</a>
+                </div>
+            </div>
+        </div>
+        <!-- Books Card -->
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="fas fa-book fa-3x text-orange mb-3"></i>
+                    <h5 class="card-title">Books</h5>
+                    <p class="card-text">Add, update, and manage the book inventory.</p>
+                    <a asp-action="Books" asp-controller="Admin" class="btn btn-orange" asp-page="/Views/Amin/Managebooks">Manage Books</a>
+                </div>
+            </div>
+        </div>
+        <!-- Categories Card -->
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="fas fa-tags fa-3x text-orange mb-3"></i>
+                    <h5 class="card-title">Categories</h5>
+                    <p class="card-text">Organize books into relevant categories.</p>
+                    <a asp-action="Categories" asp-controller="Admin" class="btn btn-orange">Manage Categories</a>
+                </div>
+            </div>
+        </div>
+        <!-- Waiting Lists Card -->
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-3x text-orange mb-3"></i>
+                    <h5 class="card-title">Waiting Lists</h5>
+                    <p class="card-text">Monitor and manage book borrowing requests.</p>
+                    <a asp-action="WaitingLists" asp-controller="Admin" class="btn btn-orange">View Waiting Lists</a>
+                </div>
+            </div>
+        </div>
+        <!-- Messages Card -->
+        <div class="col-md-4">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <i class="fas fa-envelope fa-3x text-orange mb-3"></i>
+                    <h5 class="card-title">Messages</h5>
+                    <p class="card-text">Review and respond to customer inquiries.</p>
+                    <a asp-action="Messages" asp-controller="Admin" class="btn btn-orange">Manage Messages</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Styles -->
+<style>
+    .text-orange {
+        color: #FF6F00;
+    }
+
+    .btn-orange {
+        background-color: #FF6F00;
+        color: white;
+        border: none;
+    }
+
+        .btn-orange:hover {
+            background-color: #FF3D00;
+            color: white;
+        }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+        .card:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+</style>

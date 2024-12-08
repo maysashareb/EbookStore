@@ -1,0 +1,76 @@
+﻿@model List<Category>
+
+<div class="container mt-5">
+    <h1 class="text-center text-orange">Manage Categories</h1>
+
+    <!-- Success Message -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["Success"]</div>
+    }
+
+    <!-- Add Category Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-orange text-white">Add New Category</div>
+        <div class="card-body">
+            <form asp-action="AddCategory" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="Name" class="form-label">Category Name</label>
+                    <input type="text" class="form-control" id="Name" name="Name" required />
+                </div>
+                <div class="mb-3">
+                    <label for="CategoryImage" class="form-label">Category Image</label>
+                    <input type="file" class="form-control" id="CategoryImage" name="categoryImage" />
+                </div>
+                <button type="submit" class="btn btn-orange">Add Category</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category List -->
+    <div class="card">
+        <div class="card-header bg-orange text-white">Existing Categories</div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in Model)
+                    {
+                        <tr>
+                            <td>@category.Id</td>
+                            <td>@category.Name</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(category.Image))
+                                {
+                                    <img src="@category.Image" alt="@category.Name" style="width: 80px; height: auto;" />
+                                }
+                                else
+                                {
+                                    <span>No Image</span>
+                                }
+                            </td>
+                            <td>
+                             
+                                <!-- Delete Button -->
+                                <form asp-action="DeleteCategory" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@category.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+
+                       
+                       
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

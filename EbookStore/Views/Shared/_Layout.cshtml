@@ -10,6 +10,7 @@
     <title>@ViewData["Title"] - EbookStore</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     <link rel="stylesheet" href="~/EbookStore.styles.css" asp-append-version="true" />
 
 </head>
@@ -34,14 +35,14 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Mainpage">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privac</a>
                         </li>
 
                         <!-- Conditional Navigation for Roles -->
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Home">Home</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageBooks">Manage Books</a>
@@ -49,11 +50,17 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Manage Categories</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Waiting Lists</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Messages</a>
+                            </li>
                         }
                         else if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
+                                <a class="nav-link text-dark" asp-area="Identity" href="/Account/Manage/Index">Profile</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Categories">Categories</a>
@@ -64,11 +71,11 @@
                         }
                     </ul>
 
-                    <!-- Search Bar -->
                     <div class="search-container">
-                        <input type="text" id="searchBox" placeholder="Search for books..." autocomplete="off" />
-                        <div id="searchResults" class="search-results"></div>
+                        <input type="text" id="search-field" placeholder="Search for books by title, author, or publisher..." class="form-control" />
+                        <div id="search-results"></div>
                     </div>
+                   
 
 \                    
                     <!-- Login/Logout -->
@@ -120,41 +127,40 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-                   $(document).ready(function () {
-            $('#searchBar').on('input', function () {
-                const searchTerm = $(this).val();
-                if (searchTerm.length > 0) {
-                    $.ajax({
-                        url: '/Book/SearchBooks', 
-                        method: 'GET',
-                        data: { searchTerm: searchTerm },
-                        success: function (data) {
-                            $('#searchResults').empty();
-                            if (data.length > 0) {
-                                data.forEach(book => {
-                                    $('#searchResults').append(
-                                        `<div class="result-item" onclick="viewBookDetails(${book.id})">${book.title}</div>`
-                                    );
-                                });
-                            } else {
-                                $('#searchResults').append('<div class="result-item">No books found</div>');
-                            }
-                        },
-                        error: function (error) {
-                            console.error('Error fetching search results:', error);
+                     
+        document.getElementById('search-field').addEventListener('input', function () {
+            const query = this.value.trim();
+
+            if (query.length > 0) {
+                fetch(`/Book/SearchBooks?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(books => {
+                        const resultsContainer = document.getElementById('search-results');
+                        resultsContainer.innerHTML = '';
+
+                        if (books.length === 0) {
+                            resultsContainer.innerHTML = '<p>No books found</p>';
+                        } else {
+                            books.forEach(book => {
+                                const resultItem = document.createElement('div');
+                                resultItem.className = 'search-result-item';
+                                resultItem.innerHTML = `
+                                    <h5>${book.Title}</h5>
+                                    <p><strong>Author:</strong> ${book.Author}</p>
+                                    <p><strong>Publisher:</strong> ${book.Publisher}</p>
+                                    <a href="/Book/Details/${book.Id}" class="btn btn-primary">View Details</a>
+                                `;
+                                resultsContainer.appendChild(resultItem);
+                            });
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching search results:', error);
                     });
-                } else {
-                    $('#searchResults').empty();
-                }
-            });
+            } else {
+                document.getElementById('search-results').innerHTML = '';
+            }
         });
-
-        function viewBookDetails(id) {
-            window.location.href = `/Book/BookDetails/${id}`; 
-        }
-
     </script>
-
 </body>
 </html>

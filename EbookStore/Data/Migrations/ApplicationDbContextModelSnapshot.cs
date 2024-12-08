@@ -201,6 +201,7 @@ namespace EbookStore.Data.Migrations
                 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -336,6 +337,8 @@ namespace EbookStore.Data.Migrations
 
 =======
 >>>>>>> ea8c56bafcdf072db337eb9da8cf7b6092689d07
+=======
+>>>>>>> ea8c56bafcdf072db337eb9da8cf7b6092689d07
             modelBuilder.Entity("EbookStore.Models.Book", b =>
                 {
                     b.HasOne("EbookStore.Models.Category", "Category")
@@ -349,6 +352,7 @@ namespace EbookStore.Data.Migrations
 
             modelBuilder.Entity("EbookStore.Models.Category", b =>
                 {
+<<<<<<< HEAD
 <<<<<<< HEAD
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
@@ -397,6 +401,11 @@ namespace EbookStore.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+=======
+                    b.HasOne("EbookStore.Models.Category", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("CategoryId");
+>>>>>>> ea8c56bafcdf072db337eb9da8cf7b6092689d07
 =======
                     b.HasOne("EbookStore.Models.Category", null)
                         .WithMany("Categories")

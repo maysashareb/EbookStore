@@ -111,7 +111,7 @@ namespace EbookStore.Areas.Identity.Pages.Account
                         // Redirect based on role if returnUrl is the default (home page)
                         if (roles.Contains("Admin") && returnUrl == Url.Content("~/"))
                         {
-                            return RedirectToAction("Index", "Admin");
+                            return RedirectToAction("Home", "Admin");
                         }
                         else if (roles.Contains("User") && returnUrl == Url.Content("~/"))
                         {

@@ -1,0 +1,98 @@
+﻿@model EbookStore.Models.Book
+
+<div class="container">
+    <h1>Manage Books</h1>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <form asp-action="ManageBooks" asp-controller="Admin" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="Title">Title</label>
+                <input type="text" id="Title" name="Title" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <textarea id="Description" name="Description" class="form-control" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="Price">Price</label>
+                <input type="number" step="0.01" id="Price" name="Price" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label for="Publisher">Publisher</label>
+                <input type="text" id="Publisher" name="Publisher" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label for="PublishedYear">Published Year</label>
+                <input type="number" id="PublishedYear" name="PublishedYear" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label for="Author">Author</label>
+                <input type="text" id="Author" name="Author" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label for="BookCover">Book Cover</label>
+                <input type="file" id="BookCover" name="BookCover" class="form-control" required />
+            </div>
+
+            <!-- Checkbox to Mark as Borrowable -->
+            <div class="form-group">
+                <input type="checkbox" id="CanBorrow" name="CanBorrow" />
+                <label for="CanBorrow">Can Borrow</label>
+            </div>
+       
+
+            <!-- Borrowing Fields -->
+            <div id="borrowFields" style="display: none;">
+                <div class="form-group">
+                    <label for="BorrowPrice">Borrow Price</label>
+                    <input type="number" step="0.01" id="BorrowPrice" name="BorrowPrice" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label for="AvailableCopiesBorrow">Available Copies to Borrow</label>
+                    <input type="number" id="AvailableCopiesBorrow" name="AvailableCopiesBorrow" class="form-control" />
+                </div>
+            </div>
+        <!-- Categories Fields -->
+        <div class="form-group">
+            <label for="CategoryId">Category</label>
+            <select id="CategoryId" name="CategoryId" class="form-control" required>
+                <option value="" disabled selected>Select a category</option>
+                @foreach (var category in ViewBag.Categories as List<Category>)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+        </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const canBorrowCheckbox = document.getElementById('CanBorrow');
+        const borrowFields = document.getElementById('borrowFields');
+
+        // Toggle visibility on checkbox change
+        canBorrowCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                borrowFields.style.display = 'block';
+            } else {
+                borrowFields.style.display = 'none';
+            }
+        });
+
+        // Ensure correct initial state
+        if (!canBorrowCheckbox.checked) {
+            borrowFields.style.display = 'none';
+        }
+    });
+</script>

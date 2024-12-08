@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using EbookStore.Data; 
-using EbookStore.Models; 
+using EbookStore.Data;
+using EbookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 namespace EbookStore.Controllers
 {
@@ -21,13 +21,13 @@ namespace EbookStore.Controllers
             return View(categories);
         }
 
-       
+
         public IActionResult Create()
         {
             return View();
         }
 
-      
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category category)
@@ -41,7 +41,7 @@ namespace EbookStore.Controllers
             return View(category);
         }
 
-        
+
         public IActionResult Edit(int id)
         {
             var category = _context.Categories.FirstOrDefault(c => c.Id == id);
@@ -49,7 +49,7 @@ namespace EbookStore.Controllers
             return View(category);
         }
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Category category)
@@ -63,7 +63,7 @@ namespace EbookStore.Controllers
             return View(category);
         }
 
-        
+
         public IActionResult Delete(int id)
         {
             var category = _context.Categories.FirstOrDefault(c => c.Id == id);

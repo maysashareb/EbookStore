@@ -1,0 +1,2 @@
+﻿ALTER TABLE Books
+ADD DiscountValue DECIMAL(18,2) NULL;

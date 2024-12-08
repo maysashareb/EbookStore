@@ -30,14 +30,14 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Mainpage">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privac</a>
                         </li>
 
                         <!-- Conditional Navigation for Roles -->
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Home">Home</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageBooks">Manage Books</a>
@@ -45,11 +45,17 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Manage Categories</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Waiting Lists</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Messages</a>
+                            </li>
                         }
                         else if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
+                                <a class="nav-link text-dark" asp-area="Identity" href="/Account/Manage/Index">Profile</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Categories">Categories</a>
@@ -64,7 +70,7 @@
                         <input type="text" id="search-field" placeholder="Search for books by title, author, or publisher..." class="form-control" />
                         <div id="search-results"></div>
                     </div>
-                    v>
+                   
 
 
                     <!-- Login/Logout -->
@@ -147,9 +153,5 @@
             }
         });
     </script>
-
-
-   
-
 </body>
 </html>

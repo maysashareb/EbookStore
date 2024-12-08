@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EbookStore.Data;
@@ -69,7 +70,7 @@ async Task SeedDataAsync(WebApplication app)
 
     // Add an admin user if it doesn't exist
     var adminEmail = "admin@example.com";
-    var adminPassword = "Admin@123"; 
+    var adminPassword = "Admin@123";
     if (await userManager.FindByEmailAsync(adminEmail) == null)
     {
         var adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };

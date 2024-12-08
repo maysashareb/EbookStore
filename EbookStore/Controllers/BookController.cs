@@ -131,6 +131,36 @@ namespace EbookStore.Controllers
             }
             return View(book); // Return a view to display book details
         }
+
+        // Get discounted books
+        public IActionResult Sales()
+        {
+            var discountedBooks = _context.Books
+                .Where(b => b.IsDiscounted && b.DiscountEndDate > DateTime.Now)
+                .ToList();
+            return View(discountedBooks);
+        }
+
+        // Automatically remove expired discounts
+        [HttpPost]
+        public IActionResult RemoveExpiredDiscounts()
+        {
+            var expiredBooks = _context.Books
+                .Where(b => b.IsDiscounted && b.DiscountEndDate <= DateTime.Now)
+                .ToList();
+
+            foreach (var book in expiredBooks)
+            {
+                book.IsDiscounted = false;
+                book.DiscountPrice = null;
+                book.DiscountEndDate = null;
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Sales));
+        }
+
     }
 }
-    
+
+

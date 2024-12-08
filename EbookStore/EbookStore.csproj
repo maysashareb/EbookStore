@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\**" />
+    <Content Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\Content\advanture.jpg" />
     <None Include="wwwroot\Content\fantasy.jpg" />
     <None Include="wwwroot\Content\howls.jpg" />

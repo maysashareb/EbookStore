@@ -14,15 +14,16 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using EbookStore.Models;
 
 namespace EbookStore.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<AppUser> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
@@ -86,44 +87,36 @@ namespace EbookStore.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            // Default return URL is the home page
             returnUrl ??= Url.Content("~/");
-
-            // Retrieve external logins
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
-                // Attempt to sign in
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return Page();
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    // Log successful login
                     _logger.LogInformation("User logged in.");
 
-                    // Get the logged-in user
-                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
-                    if (user != null)
+                    var roles = await _signInManager.UserManager.GetRolesAsync(user);
+                    if (roles.Contains("Admin") && returnUrl == Url.Content("~/"))
                     {
-                        // Get the roles of the user
-                        var roles = await _signInManager.UserManager.GetRolesAsync(user);
-
-                        // Redirect based on role if returnUrl is the default (home page)
-                        if (roles.Contains("Admin") && returnUrl == Url.Content("~/"))
-                        {
-                            return RedirectToAction("Index", "Admin");
-                        }
-                        else if (roles.Contains("User") && returnUrl == Url.Content("~/"))
-                        {
-                            return RedirectToAction("Mainpage", "Customer");
-                        }
+                        return RedirectToAction("Index", "Admin");
+                    }
+                    else if (roles.Contains("User") && returnUrl == Url.Content("~/"))
+                    {
+                        return RedirectToAction("Mainpage", "Customer");
                     }
 
-                    // Redirect to the original return URL
                     return LocalRedirect(returnUrl);
                 }
 
-                // Handle other login outcomes
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
@@ -133,15 +126,12 @@ namespace EbookStore.Areas.Identity.Pages.Account
                     _logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
-                }
+
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
 
-            // If we got this far, something failed, redisplay the form
             return Page();
         }
+
     }
 }

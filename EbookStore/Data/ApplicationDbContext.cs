@@ -5,10 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+public class ApplicationDbContext : IdentityDbContext<AppUser>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
     {
     }
 

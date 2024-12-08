@@ -5,6 +5,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using EbookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -17,13 +18,13 @@ namespace EbookStore.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager; // Updated to use AppUser
         private readonly IEmailSender _emailSender;
         private readonly IWebHostEnvironment _environment;
 
-        public RegisterConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender emailSender, IWebHostEnvironment environment)
+        public RegisterConfirmationModel(UserManager<AppUser> userManager, IEmailSender emailSender, IWebHostEnvironment environment)
         {
-            _userManager = userManager;
+            _userManager = userManager; // Updated to use AppUser
             _emailSender = emailSender;
             _environment = environment;
         }
@@ -40,7 +41,7 @@ namespace EbookStore.Areas.Identity.Pages.Account
             }
 
             returnUrl = returnUrl ?? Url.Content("~/");
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email); // Updated to use AppUser
             if (user == null)
             {
                 return NotFound($"Unable to load user with email '{email}'.");

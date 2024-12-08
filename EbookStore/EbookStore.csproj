@@ -17,7 +17,6 @@
     <None Include="wwwroot\Content\thrilling advanture.jpg" />
     <None Include="wwwroot\Content\two sides.jpg" />
     <None Include="wwwroot\Content\videoplayback.mp4" />
-    <None Include="wwwroot\Content\worldvoyage.jpg" />
   </ItemGroup>
 
   <ItemGroup>

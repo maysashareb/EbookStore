@@ -1,0 +1,3 @@
+﻿ALTER TABLE Books
+ALTER COLUMN PublisheYear INT;
+

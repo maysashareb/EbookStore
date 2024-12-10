@@ -1,7 +1,5 @@
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using EbookStore.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +14,15 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+
+// Add session services BEFORE `builder.Build()`
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.Cookie.HttpOnly = true; // Make the cookie HTTP-only
+    options.Cookie.IsEssential = true; // Make the cookie essential
+});
 
 var app = builder.Build();
 
@@ -34,6 +41,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession(); // Use session middleware AFTER adding the session services
 
 app.UseAuthentication();
 app.UseAuthorization();

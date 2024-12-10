@@ -9,6 +9,23 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
+
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Book>(entity =>
+        {
+            entity.Property(e => e.BorrowPrice)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(e => e.DiscountPrice)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(e => e.Price)
+                  .HasColumnType("decimal(18,2)");
+        });
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<Book> Books { get; set; } = null!;

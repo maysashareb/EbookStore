@@ -1,3 +1,2 @@
-﻿ALTER TABLE Books
-ADD Author NVARCHAR(MAX),
-    Publisher NVARCHAR(MAX);
+﻿
+

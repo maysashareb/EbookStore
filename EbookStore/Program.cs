@@ -1,3 +1,4 @@
+using EbookStore.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,22 +10,19 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>() // Add this line to include roles
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-
-
-//builder.Services.AddIdentity<AppUser, IdentityRole>(
-//    options =>
-//    {
-//        options.Password.RequiredUniqueChars = 0;
-//        options.Password.RequireUppercase = false;
-//        options.Password.RequiredLength = 8;
-//        options.Password.RequireNonAlphanumeric = false;
-//        options.Password.RequireLowercase = false;
-//    })
-//    .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-
+// Configure Identity with custom AppUser
+builder.Services.AddDefaultIdentity<AppUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireLowercase = false;
+})
+.AddRoles<IdentityRole>() // Include roles
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddControllersWithViews();
 

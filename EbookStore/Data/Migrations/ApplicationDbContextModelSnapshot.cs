@@ -396,8 +396,8 @@ namespace EbookStore.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -531,10 +531,7 @@ namespace EbookStore.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-=======
->>>>>>> ea8c56bafcdf072db337eb9da8cf7b6092689d07
-=======
->>>>>>> ea8c56bafcdf072db337eb9da8cf7b6092689d07
+
             modelBuilder.Entity("EbookStore.Models.Book", b =>
                 {
                     b.HasOne("EbookStore.Models.Category", "Category")

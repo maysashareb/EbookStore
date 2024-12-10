@@ -9,9 +9,22 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>() // Add this line to include roles
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+//builder.Services.AddIdentity<AppUser, IdentityRole>(
+//    options =>
+//    {
+//        options.Password.RequiredUniqueChars = 0;
+//        options.Password.RequireUppercase = false;
+//        options.Password.RequiredLength = 8;
+//        options.Password.RequireNonAlphanumeric = false;
+//        options.Password.RequireLowercase = false;
+//    })
+//    .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
 
 builder.Services.AddControllersWithViews();
 
@@ -64,7 +77,11 @@ async Task SeedDataAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    // Ensure that the database is created and migrations are applied
+    await dbContext.Database.MigrateAsync();
 
     // Add roles if they don't exist
     var roles = new[] { "Admin", "User" };
@@ -81,7 +98,7 @@ async Task SeedDataAsync(WebApplication app)
     var adminPassword = "Admin@123";
     if (await userManager.FindByEmailAsync(adminEmail) == null)
     {
-        var adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+        var adminUser = new AppUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
         await userManager.CreateAsync(adminUser, adminPassword);
         await userManager.AddToRoleAsync(adminUser, "Admin");
     }

@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using EbookStore.Models
+@inject UserManager<EbookStore.Models.AppUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,6 +12,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     <link rel="stylesheet" href="~/EbookStore.styles.css" asp-append-version="true" />
+
 </head>
 <body>
     <header>
@@ -73,13 +78,16 @@
                     </div>
                    
 
-
+\                    
                     <!-- Login/Logout -->
                     <ul class="navbar-nav">
                         @if (User.Identity.IsAuthenticated)
                         {
+                            var user = await UserManager.GetUserAsync(User);
+                            string fullName = user != null ? $"{user.FirstName}{user.LastName}" : "Guest";
+
                             <li class="nav-item">
-                                <span class="nav-link text-dark">Hello, @User.Identity.Name!</span>
+                                <span class="nav-link text-dark">Hello, @fullName!</span>
                             </li>
                             <li class="nav-item">
                                 <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Mainpage", "Customer")">
@@ -97,6 +105,7 @@
                             </li>
                         }
                     </ul>
+
                 </div>
             </div>
         </nav>

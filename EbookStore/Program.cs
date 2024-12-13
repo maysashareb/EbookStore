@@ -1,4 +1,5 @@
 using EbookStore.Models;
+using EbookStore.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,17 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<PayPalService>(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    return new PayPalService(
+        configuration["PayPal:ClientId"],
+        configuration["PayPal:ClientSecret"]
+    );
+});
+
+// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 // Add session services BEFORE `builder.Build()`
@@ -100,4 +112,5 @@ async Task SeedDataAsync(WebApplication app)
         await userManager.CreateAsync(adminUser, adminPassword);
         await userManager.AddToRoleAsync(adminUser, "Admin");
     }
+
 }

@@ -8,6 +8,9 @@ namespace EbookStore.Models
         public string? Title { get; set; } // Nullable
         public string? Description { get; set; } // Nullable
         public decimal Price { get; set; }
+
+        public decimal BorrowPrice { get; set; } 
+
         public int CategoryId { get; set; } // Keep this for the foreign key in Books
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
@@ -27,7 +30,6 @@ namespace EbookStore.Models
         public int? AvailableCopiesBorrow { get; set; }
         public int PublisheYear { get; set; }
         public int AvailableCopies { get; set; }
-        public decimal? BorrowPrice { get; set; }
 
 
 

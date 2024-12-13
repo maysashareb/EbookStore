@@ -149,13 +149,16 @@
                         <p>@book.Description</p>
                         <p>Price: @book.Price.ToString("C")</p>
                         @if (User.Identity.IsAuthenticated)
-                        {
-                            <button class="buy-btn">Buy Now</button>
-                        }
+                            @if (book != null)
+                            {
+                                <a asp-controller="Cart" asp-action="AddToCart" asp-route-bookId="@book.Id" class="btn btn-primary">Buy Now</a>
+                            }
                         else
+                        @if (book != null)
                         {
-                            <button class="buy-btn" onclick="showLoginMessage()">Buy Now</button>
+                            <a asp-controller="Cart" asp-action="AddToCart" asp-route-bookId="@book.Id" class="btn btn-primary">Buy Now</a>
                         }
+
                      
                     </div>
                 </div>

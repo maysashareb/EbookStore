@@ -59,5 +59,7 @@ public class CustomerController : Controller
         // Logic to send a message to the admin
         return RedirectToAction("Contact");
     }
+ 
+    
 
 }

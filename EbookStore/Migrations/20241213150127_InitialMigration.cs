@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EbookStore.Data.Migrations
+namespace EbookStore.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
@@ -10,8 +10,6 @@ namespace EbookStore.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-  
-
 
         }
 

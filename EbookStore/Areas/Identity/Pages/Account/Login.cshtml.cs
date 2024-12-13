@@ -107,15 +107,14 @@ namespace EbookStore.Areas.Identity.Pages.Account
                     var roles = await _signInManager.UserManager.GetRolesAsync(user);
                     if (roles.Contains("Admin") && returnUrl == Url.Content("~/"))
                     {
-<<<<<<< HEAD
-                        return RedirectToAction("Index", "Admin");
+
+                        return RedirectToAction("Home", "Admin");
                     }
                     else if (roles.Contains("User") && returnUrl == Url.Content("~/"))
                     {
                         return RedirectToAction("Mainpage", "Customer");
-=======
                         // Get the roles of the user
-                        var roles = await _signInManager.UserManager.GetRolesAsync(user);
+                        var role = await _signInManager.UserManager.GetRolesAsync(user);
 
                         // Redirect based on role if returnUrl is the default (home page)
                         if (roles.Contains("Admin") && returnUrl == Url.Content("~/"))
@@ -126,7 +125,6 @@ namespace EbookStore.Areas.Identity.Pages.Account
                         {
                             return RedirectToAction("Mainpage", "Customer");
                         }
->>>>>>> ea8c56bafcdf072db337eb9da8cf7b6092689d07
                     }
 
                     return LocalRedirect(returnUrl);

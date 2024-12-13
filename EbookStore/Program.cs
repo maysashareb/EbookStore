@@ -1,3 +1,5 @@
+using EbookStore.Models;
+using EbookStore.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,23 +11,31 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>() // Add this line to include roles
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+// Configure Identity with custom AppUser
+builder.Services.AddDefaultIdentity<AppUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireLowercase = false;
+})
+.AddRoles<IdentityRole>() // Include roles
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
+builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<PayPalService>(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    return new PayPalService(
+        configuration["PayPal:ClientId"],
+        configuration["PayPal:ClientSecret"]
+    );
+});
 
-//builder.Services.AddIdentity<AppUser, IdentityRole>(
-//    options =>
-//    {
-//        options.Password.RequiredUniqueChars = 0;
-//        options.Password.RequireUppercase = false;
-//        options.Password.RequiredLength = 8;
-//        options.Password.RequireNonAlphanumeric = false;
-//        options.Password.RequireLowercase = false;
-//    })
-//    .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-
-
+// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 // Add session services BEFORE `builder.Build()`
@@ -102,4 +112,5 @@ async Task SeedDataAsync(WebApplication app)
         await userManager.CreateAsync(adminUser, adminPassword);
         await userManager.AddToRoleAsync(adminUser, "Admin");
     }
+
 }

@@ -99,27 +99,26 @@ namespace EbookStore.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
-
+        // Allow search for both authenticated and non-authenticated users
+        [AllowAnonymous]
+        
         [HttpGet]
-        public JsonResult SearchBooks(string query)
+        public IActionResult SearchBooks(string query)
         {
+            // Make sure the query is not empty
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return Json(new List<Book>());
+            }
+
+            // Search books by title, author, or publisher
             var books = _context.Books
-                .Where(b =>
-                    b.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                    b.Author.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                    b.Publisher.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .Select(b => new
-                {
-                    b.Id,
-                    b.Title,
-                    b.Author,
-                    b.Publisher
-                })
+                .Where(b => b.Title.Contains(query) || b.Author.Contains(query) || b.Publisher.Contains(query))
+                .Select(b => new { b.Id, b.Title, b.Author, b.Publisher })
                 .ToList();
 
             return Json(books);
         }
-
 
         // GET: /Book/BookDetails/{id}
         public IActionResult BookDetails(int id)

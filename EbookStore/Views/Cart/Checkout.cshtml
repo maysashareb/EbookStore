@@ -1,0 +1,67 @@
+﻿@model IEnumerable<EbookStore.Models.CartItems>
+
+<h2>Checkout</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Transaction Type</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Book.Title</td>
+                <td>@item.TransactionType</td>
+                <td>@item.Quantity</td>
+                <td>@(item.TransactionType == "Buy" ? item.Book.Price : item.Book.BorrowPrice)</td>
+                <td>@(item.TransactionType == "Buy" ? item.Book.Price * item.Quantity : item.Book.BorrowPrice * item.Quantity)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-end">
+    <form asp-action="Checkout" method="post">
+        <button type="submit" class="btn btn-success">Confirm Order</button>
+    </form>
+    <div id="paypal-button-container"></div>
+
+    <script>
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                // Set up the transaction
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '@Model.Sum(item => item.TransactionType == "Buy" ? item.Book.Price * item.Quantity : item.Book.BorrowPrice * item.Quantity)'
+                        },
+                        description: "Your Purchase at EbookStore"
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                // Capture the funds from the transaction
+                return actions.order.capture().then(function(details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name);
+                    // Redirect to Success Action
+                    window.location.href = '@Url.Action("Success", "Cart")';
+                });
+            },
+            onCancel: function(data) {
+                alert('Payment was canceled.');
+            },
+            onError: function(err) {
+                console.error(err);
+                alert('An error occurred during the payment process.');
+            }
+        }).render('#paypal-button-container'); // Display PayPal button
+    </script>
+
+</div>
+<script src="https://www.paypal.com/sdk/js?client-id=AViMoG5HFT1IloKgnU5Vj0AHoPs1mZwhhljctgHCDb2jHMkZKsYxbA9SDRSGfOL2QlgOBa8Yp2PEfTmn&currency=USD"></script>

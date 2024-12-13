@@ -1,42 +1,72 @@
-﻿@model List<EbookStore.Models.CartItem>
+﻿@model IEnumerable<EbookStore.Models.CartItems>
+
 <h2>Your Cart</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-                <tr>
-                    <td>@item.Title</td>
-                    <td>@item.Price.ToString("C")</td>
-                    <td>
-                        <form asp-action="UpdateCart" method="post">
-                            <input type="hidden" name="bookId" value="@item.BookId" />
-                            <input type="number" name="quantity" value="@item.Quantity" min="1" />
-                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                        </form>
-                    </td>
-                    <td>@(item.Price * item.Quantity).ToString("C")</td>
-                    <td>
-                        <a asp-action="RemoveFromCart" asp-route-bookId="@item.BookId" class="btn btn-danger btn-sm">Remove</a>
-                    </td>
-                </tr>
-        }
-    </tbody>
-</table>
 
 @if (!Model.Any())
 {
-        <p>Your cart is empty.</p>
+    <p>Your cart is empty.</p>
 }
 else
 {
-        <a asp-action="Checkout" class="btn btn-success">Checkout</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Transaction Type</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Book.Title</td>
+                    <td>@item.TransactionType</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.TransactionType == "Buy" ? item.Book.Price : item.Book.BorrowPrice)</td>
+                    <td>@(item.TransactionType == "Buy" ? item.Book.Price * item.Quantity : item.Book.BorrowPrice * item.Quantity)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Total: @Model.Sum(item => item.TransactionType == "Buy" ? item.Book.Price * item.Quantity : item.Book.BorrowPrice * item.Quantity)</h4>
+
+    <div id="paypal-button-container"></div>
 }
+<form action="/Cart/Checkout" method="post">
+    <button type="submit" class="btn btn-primary">Checkout with PayPal</button>
+</form>
+
+<script>
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            // Set up the transaction
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '@Model.Sum(item => item.TransactionType == "Buy" ? item.Book.Price * item.Quantity : item.Book.BorrowPrice * item.Quantity)'
+                    },
+                    description: "Your Purchase at EbookStore"
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            // Capture the funds from the transaction
+            return actions.order.capture().then(function(details) {
+                alert('Transaction completed by ' + details.payer.name.given_name);
+                // Redirect to Success Action
+                window.location.href = '@Url.Action("Success", "Cart")';
+            });
+        },
+        onCancel: function(data) {
+            alert('Payment was canceled.');
+        },
+        onError: function(err) {
+            console.error(err);
+            alert('An error occurred during the payment process.');
+        }
+    }).render('#paypal-button-container'); // Display PayPal button
+</script>

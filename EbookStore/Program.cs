@@ -2,8 +2,11 @@ using EbookStore.Models;
 using EbookStore.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using EbookStore.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -30,13 +33,14 @@ builder.Services.AddSingleton<PayPalService>(provider =>
 {
     var configuration = provider.GetRequiredService<IConfiguration>();
     return new PayPalService(
-        configuration["PayPal:ClientId"],
-        configuration["PayPal:ClientSecret"]
+        configuration["PayPal:AV8bBCDpoCX38F6pEGoVIh5H8aFnjpg7wgqcr75-N3aFBZlW4WUPIdzDoH36kWxICqWa4nGsR2PgGNTV"],
+        configuration["PayPal:EDtGhU509jfIRWjq4n2zqgbloZKUi0gm4yDYqRtfLNgqmrpprH_Gv_-_-SvU_5rixZbXNFx15bImtzep"]
     );
 });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient();
 
 // Add session services BEFORE `builder.Build()`
 builder.Services.AddDistributedMemoryCache();
@@ -68,6 +72,7 @@ app.UseSession(); // Use session middleware AFTER adding the session services
 
 app.UseAuthentication();
 app.UseAuthorization();
+ 
 
 app.MapControllerRoute(
     name: "default",
@@ -91,7 +96,7 @@ async Task SeedDataAsync(WebApplication app)
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
     // Ensure that the database is created and migrations are applied
-    await dbContext.Database.MigrateAsync();
+    await dbContext.Database.EnsureCreatedAsync();
 
     // Add roles if they don't exist
     var roles = new[] { "Admin", "User" };

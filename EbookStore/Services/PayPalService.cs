@@ -1,67 +1,77 @@
-﻿using PayPal.Api;
-using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using PayPalCheckoutSdk.Core;
+using PayPalCheckoutSdk.Orders;
 
 namespace EbookStore.Services
 {
-    
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net.Http;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using PayPalCheckoutSdk.Core;
+    using PayPalCheckoutSdk.Orders;
+
     public class PayPalService
     {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
+        private readonly PayPalHttpClient _client;
 
         public PayPalService(string clientId, string clientSecret)
         {
-            _clientId = clientId;
-            _clientSecret = clientSecret;
+            var environment = new SandboxEnvironment(clientId, clientSecret);
+            _client = new PayPalHttpClient(environment);
         }
 
-        private APIContext GetAPIContext()
+        public async Task<string> CreateOrderAsync(decimal totalAmount, string currency, string returnUrl, string cancelUrl)
         {
-            var config = new Dictionary<string, string>
-        {
-            { "mode", "sandbox" }, // Use "live" for production
-        };
-            var accessToken = new OAuthTokenCredential(_clientId, _clientSecret, config).GetAccessToken();
-            return new APIContext(accessToken);
-        }
-
-        public Payment CreatePayment(decimal total, string currency, string returnUrl, string cancelUrl)
-        {
-            var apiContext = GetAPIContext();
-
-            var payment = new Payment
+            // Create the order request
+            var orderRequest = new OrderRequest
             {
-                intent = "sale",
-                payer = new Payer { payment_method = "paypal" },
-                transactions = new List<Transaction>
+                CheckoutPaymentIntent = "CAPTURE", // Use CAPTURE for immediate payment
+                PurchaseUnits = new List<PurchaseUnitRequest>
             {
-                new Transaction
+                new PurchaseUnitRequest
                 {
-                    amount = new Amount
+                    AmountWithBreakdown = new AmountWithBreakdown
                     {
-                        currency = currency,
-                        total = total.ToString("F")
-                    },
-                    description = "Ebook Store Purchase"
+                        CurrencyCode = currency,
+                        Value = totalAmount.ToString("F2") // Format to 2 decimal places
+                    }
                 }
             },
-                redirect_urls = new RedirectUrls
+                ApplicationContext = new ApplicationContext
                 {
-                    cancel_url = cancelUrl,
-                    return_url = returnUrl
+                    ReturnUrl = returnUrl,
+                    CancelUrl = cancelUrl
                 }
             };
 
-            return payment.Create(apiContext);
-        }
+            // Create the request
+            var request = new OrdersCreateRequest();
+            request.Prefer("return=representation");
+            request.RequestBody(orderRequest);
 
-        public Payment ExecutePayment(string paymentId, string payerId)
-        {
-            var apiContext = GetAPIContext();
-            var paymentExecution = new PaymentExecution { payer_id = payerId };
-            var payment = new Payment { id = paymentId };
-            return payment.Execute(apiContext, paymentExecution);
+            // Execute the request
+            var response = await _client.Execute(request);
+            var result = response.Result<Order>();
+
+            // Extract the approval link
+            var approvalUrl = result.Links.FirstOrDefault(link => link.Rel == "approve")?.Href;
+
+            if (approvalUrl == null)
+            {
+                throw new Exception("Approval URL not found in PayPal response.");
+            }
+
+            return approvalUrl;
         }
     }
-
 }
+

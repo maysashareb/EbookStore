@@ -3,24 +3,26 @@ using Microsoft.EntityFrameworkCore;
 using EbookStore.Data;
 using EbookStore.Models;
 using System.Linq;
-using PayPal.Api;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace EbookStore.Controllers
 {
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly string _clientId = "YourPayPalClientId";
+        private readonly string _clientSecret = "YourPayPalClientSecret";
+        private readonly string _baseUrl = "https://api.sandbox.paypal.com";
 
         public CartController(ApplicationDbContext context)
         {
             _context = context;
         }
-        public IActionResult Cancel()
-        {
-            // Handle the cancellation (e.g., notify the user)
-            return View("Cancel");
-        }
 
+        // Add to Cart
         public IActionResult AddToCart(int bookId, string transactionType)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -28,7 +30,6 @@ namespace EbookStore.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            // Check if the user has an active cart
             var cart = _context.Carts.FirstOrDefault(c => c.UserID == userId && c.IsActive);
             if (cart == null)
             {
@@ -37,7 +38,6 @@ namespace EbookStore.Controllers
                 _context.SaveChanges();
             }
 
-            // Add or update the cart item
             var existingItem = _context.CartItems.FirstOrDefault(ci => ci.CartID == cart.CartID && ci.BookID == bookId && ci.TransactionType == transactionType);
 
             if (existingItem != null)
@@ -51,54 +51,13 @@ namespace EbookStore.Controllers
                     CartID = cart.CartID,
                     BookID = bookId,
                     Quantity = 1,
-                    TransactionType = transactionType ?? "DefaultType" // Ensure TransactionType has a value
-                
-
-            };
+                    TransactionType = transactionType ?? "DefaultType"
+                };
                 _context.CartItems.Add(cartItem);
             }
 
             _context.SaveChanges();
-
-            // Redirect to the Cart page
-            return RedirectToAction("index");
-        }
-
-
-        public IActionResult Success(string paymentId, string token, string PayerID)
-        {
-            if (string.IsNullOrEmpty(paymentId) || string.IsNullOrEmpty(PayerID))
-            {
-                return View("Error"); // Handle missing parameters
-            }
-
-            // Initialize PayPal API context
-            var config = ConfigManager.Instance.GetProperties();
-            var accessToken = new OAuthTokenCredential(config).GetAccessToken();
-            var apiContext = new APIContext(accessToken);
-
-            // Execute the payment
-            var payment = new Payment() { id = paymentId };
-            var execution = new PaymentExecution() { payer_id = PayerID };
-
-            try
-            {
-                var executedPayment = payment.Execute(apiContext, execution);
-
-                if (executedPayment.state.ToLower() != "approved")
-                {
-                    return View("Error"); // Payment failed
-                }
-
-                // Payment successful, redirect to a success page
-                return View("Success");
-            }
-            catch (Exception ex)
-            {
-                // Log the error for debugging
-                Console.WriteLine(ex.Message);
-                return View("Error");
-            }
+            return RedirectToAction("Index");
         }
 
         // View Cart
@@ -122,8 +81,7 @@ namespace EbookStore.Controllers
 
         // Checkout
         [HttpPost]
-        [HttpPost]
-        public IActionResult Checkout()
+        public async Task<IActionResult> Checkout()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
@@ -138,14 +96,13 @@ namespace EbookStore.Controllers
             if (cart == null || !cart.CartItems.Any())
                 return BadRequest("Your cart is empty.");
 
-            // Use fully qualified name for the Order model
             var order = new EbookStore.Models.Order
             {
                 UserID = userId,
                 OrderDate = DateTime.Now,
                 TotalAmount = cart.CartItems.Sum(ci => ci.TransactionType == "Buy" ? ci.Book.Price * ci.Quantity : ci.Book.BorrowPrice * ci.Quantity),
                 PaymentStatus = "Pending",
-                PaymentMethod = "PayPal" // Example: can integrate payment here
+                PaymentMethod = "PayPal"
             };
             _context.Orders.Add(order);
             _context.SaveChanges();
@@ -166,87 +123,103 @@ namespace EbookStore.Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction("Success");
-        }
-
-
-        public IActionResult RemoveFromCart(int id)
-        {
-            var item = _context.CartItems.FirstOrDefault(ci => ci.CartItemID == id);
-            if (item != null)
+            // Redirect to PayPal for payment
+            var approvalUrl = await CreatePayPalPayment(order);
+            if (string.IsNullOrEmpty(approvalUrl))
             {
-                _context.CartItems.Remove(item);
-                _context.SaveChanges();
+                return View("Error");
             }
-            return RedirectToAction("Index");
-            // Configure PayPal settings
-            var config = ConfigManager.Instance.GetProperties();
-            var accessToken = new OAuthTokenCredential(config).GetAccessToken();
-            var apiContext = new APIContext(accessToken);
-
-            // Create payment details
-            var cartItems = _context.CartItems.ToList();
-            var itemList = new ItemList() { items = new List<Item>() };
-
-            foreach (var cartItem in cartItems)
-            {
-                itemList.items.Add(new Item()
-                {
-                    name = cartItem.Book.Title,
-                    currency = "USD",
-                    price = cartItem.Book.Price.ToString(),
-                    quantity = cartItem.Quantity.ToString(),
-                    sku = cartItem.BookID.ToString()
-                });
-            }
-
-            var payer = new Payer() { payment_method = "paypal" };
-            var redirectUrls = new RedirectUrls()
-            {
-                cancel_url = Url.Action("Cancel", "Cart", null, Request.Scheme),
-                return_url = Url.Action("Success", "Cart", null, Request.Scheme)
-            };
-
-            var details = new Details()
-            {
-                tax = "0",
-                shipping = "0",
-                subtotal = cartItems.Sum(c => c.Book.Price * c.Quantity).ToString()
-            };
-
-            var amount = new Amount()
-            {
-                currency = "USD",
-                total = details.subtotal, // Total must match subtotal + tax + shipping
-                details = details
-            };
-
-            var transactionList = new List<Transaction>();
-            transactionList.Add(new Transaction()
-            {
-                description = "EbookStore purchase",
-                invoice_number = Guid.NewGuid().ToString(),
-                amount = amount,
-                item_list = itemList
-            });
-
-            var payment = new Payment()
-            {
-                intent = "sale",
-                payer = payer,
-                transactions = transactionList,
-                redirect_urls = redirectUrls
-            };
-
-            var createdPayment = payment.Create(apiContext);
-
-            // Extract the redirect URL
-            var approvalUrl = createdPayment.links.FirstOrDefault(link => link.rel.Equals("approval_url")).href;
 
             return Redirect(approvalUrl);
-           
+        }
+
+        // Create PayPal Payment
+        private async Task<string> CreatePayPalPayment(EbookStore.Models.Order order)
+        {
+            using var client = new HttpClient();
+            var accessToken = await GetPayPalAccessToken();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            var itemList = order.OrderItems.Select(item => new
+            {
+                name = item.Book.Title,
+                quantity = item.Quantity.ToString(),
+                unit_amount = new { currency_code = "USD", value = item.Price.ToString("F2") },
+                category = "PHYSICAL_GOODS"
+            }).ToList();
+
+            var payload = new
+            {
+                intent = "CAPTURE",
+                purchase_units = new[]
+                {
+                    new {
+                        amount = new {
+                            currency_code = "USD",
+                            value = order.TotalAmount.ToString("F2"),
+                            breakdown = new {
+                                item_total = new { currency_code = "USD", value = order.TotalAmount.ToString("F2") }
+                            }
+                        },
+                        items = itemList
+                    }
+                },
+                application_context = new
+                {
+                    return_url = Url.Action("Success", "Cart", null, Request.Scheme),
+                    cancel_url = Url.Action("Cancel", "Cart", null, Request.Scheme)
+                }
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_baseUrl}/v2/checkout/orders", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            dynamic result = JsonConvert.DeserializeObject(responseBody);
+
+            var links = (IEnumerable<dynamic>)result.links;
+            return links.FirstOrDefault(link => link.rel == "approve")?.href;
 
         }
-    }
 
+        // Get PayPal Access Token
+        private async Task<string> GetPayPalAccessToken()
+        {
+            using var client = new HttpClient();
+
+            var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_clientId}:{_clientSecret}"));
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", authHeader);
+
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "client_credentials")
+            });
+
+            var response = await client.PostAsync($"{_baseUrl}/v1/oauth2/token", content);
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            dynamic result = JsonConvert.DeserializeObject(responseBody);
+
+            return result.access_token;
+        }
+
+        // Success
+        public IActionResult Success(string paymentId)
+        {
+            return View("Success");
+        }
+
+        // Cancel
+        public IActionResult Cancel()
+        {
+            return View("Cancel");
+        }
+    }
 }

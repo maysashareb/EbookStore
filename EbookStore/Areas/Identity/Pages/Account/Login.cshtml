@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Log in";
 }
+
 <head>
     <link href="~/css/Login.css" rel="stylesheet" />
 </head>
@@ -16,13 +17,13 @@
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
             <div class="input-field">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username"  required />
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" required />
                 <label asp-for="Input.Email">Enter your email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
 
             <div class="input-field">
-                <input asp-for="Input.Password" class="form-control" autocomplete="current-password"  type="password" required />
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" type="password" required />
                 <label asp-for="Input.Password">Enter your password</label>
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>

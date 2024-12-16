@@ -41,7 +41,7 @@
         }
 
 
-        public DbSet<Book> Books { get; set; } = null!;
+        public DbSet<Book> Books { get; set; }
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Cart> Carts { get; set; }
 

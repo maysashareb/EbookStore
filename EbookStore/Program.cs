@@ -80,6 +80,12 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.MapControllerRoute(
+    name: "store",
+    pattern: "Store/{action=Gallery}/{id?}",
+    defaults: new { controller = "Store" });
+
+
+app.MapControllerRoute(
     name: "book",
     pattern: "Book/{action=Index}/{id?}");
 
@@ -111,9 +117,11 @@ async Task SeedDataAsync(WebApplication app)
     // Add an admin user if it doesn't exist
     var adminEmail = "admin@example.com";
     var adminPassword = "Admin@123";
+    var firstname = "Admin";
+    var lastname = "web";
     if (await userManager.FindByEmailAsync(adminEmail) == null)
     {
-        var adminUser = new AppUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+        var adminUser = new AppUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true, FirstName = firstname, LastName=lastname};
         await userManager.CreateAsync(adminUser, adminPassword);
         await userManager.AddToRoleAsync(adminUser, "Admin");
     }

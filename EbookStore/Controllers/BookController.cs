@@ -4,6 +4,7 @@ using EbookStore.Data; // Namespace for DbContext
 using EbookStore.Models; // Namespace for models
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace EbookStore.Controllers
@@ -101,7 +102,7 @@ namespace EbookStore.Controllers
         }
         // Allow search for both authenticated and non-authenticated users
         [AllowAnonymous]
-        
+
         [HttpGet]
         public IActionResult SearchBooks(string query)
         {
@@ -158,7 +159,12 @@ namespace EbookStore.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(Sales));
         }
-
+        [AllowAnonymous] // Make it accessible to all users
+        public IActionResult Gallery()
+        {
+            var books = _context.Books.Include(b => b.Category).ToList(); // Fetch books with categories
+            return View(books); // Pass the list of books to the view
+        }
     }
 }
 

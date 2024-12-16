@@ -9,6 +9,6 @@ namespace EbookStore.Models
         public string? Image { get; set; } // Nullable
        // public DbSet<Category> Categories { get; set; }
 
-        public ICollection<Book>? Books { get; set; }
+        public List<Book>? Books { get; set; }
     }
 }

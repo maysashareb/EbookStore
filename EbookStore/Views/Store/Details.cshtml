@@ -1,0 +1,70 @@
+﻿@model EbookStore.Models.Book
+
+@{
+    ViewData["Title"] = "Details";
+}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="~/css/Details.css">
+</head>
+
+<!-- Large container for everything (book details and image in one container) -->
+    <div class="row">
+        <!-- Book Details and Image Section (Inside the same container) -->
+        <div class="col-md-12">
+                <div class="row">
+                    <!-- Left Column: Book Details -->
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h4>Book Details</h4>
+                            <dl class="row">
+                                <dt class="col-sm-3">Title:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Title)</dd>
+
+                                <dt class="col-sm-3">Author:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Author)</dd>
+
+                                <dt class="col-sm-3">Publish Year:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.PublisheYear)</dd>
+
+                                <dt class="col-sm-3">Category:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Category.Name)</dd>
+
+                                <dt class="col-sm-3">Price:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Price)</dd>
+
+                                <dt class="col-sm-3">Borrowing Price:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.BorrowPrice)</dd>
+
+                                <dt class="col-sm-3">Discount Price:</dt>
+                                <dd class="col-sm-9">
+                                    @if (Model.IsDiscounted)
+                                    {
+                                        //@Model.DiscountPrice.ToString("C")  <!-- Display Discount Price as Currency -->
+                                    }
+                                    else
+                                    {
+                                        <span>0.00</span>  <!-- Display 0 when no discount -->
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-3">Description:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Description)</dd>
+                            </dl>
+                        </div>
+                        <div class="text-center">
+                            <a asp-action="Gallery" class="btn btn-warning"><i class="fa-solid fa-arrow-left"></i> Back</a>
+                            <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model.Id" class="btn btn-primary store-btn float-right"><i class="fa-solid fa-cart-plus"></i> Add to cart</a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Book Image -->
+                    <div class="col-md-3">
+                            <img src="@Model.ImageUrl" class="card-img-top card-img-custom" alt="Book Image">
+                    </div>
+                </div>
+        </div>
+    </div>

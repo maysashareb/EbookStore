@@ -89,6 +89,11 @@ app.MapControllerRoute(
     name: "book",
     pattern: "Book/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "book",
+    pattern: "Book/{action=Index}/{id?}",
+    defaults: new { controller = "Book" });
+
 await SeedDataAsync(app); // Call the seed method
 
 app.Run();
@@ -125,5 +130,5 @@ async Task SeedDataAsync(WebApplication app)
         await userManager.CreateAsync(adminUser, adminPassword);
         await userManager.AddToRoleAsync(adminUser, "Admin");
     }
-
+   
 }

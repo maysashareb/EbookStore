@@ -104,24 +104,42 @@ public class AdminController : Controller
     [HttpPost]
     public IActionResult DeleteCategory(int id)
     {
+        // Find the category and its dependent records
         var category = _context.Categories.Find(id);
+
         if (category != null)
         {
-            // Delete the associated image file
-            var imagePath = Path.Combine("wwwroot", category.Image?.TrimStart('/'));
-            if (System.IO.File.Exists(imagePath))
+            // Delete related books
+            var booksToDelete = _context.Books.Where(b => b.CategoryId == id).ToList();
+
+            foreach (var book in booksToDelete)
             {
-                System.IO.File.Delete(imagePath);
+                // Delete related OrderItems for each book
+                var orderItems = _context.OrderItems.Where(oi => oi.BookID == book.Id).ToList();
+                _context.OrderItems.RemoveRange(orderItems);
+
+                _context.Books.Remove(book); // Delete the book
             }
 
+            // Finally, delete the category
             _context.Categories.Remove(category);
-            _context.SaveChanges();
+
+            _context.SaveChanges(); // Commit changes
             TempData["Success"] = "Category deleted successfully!";
+        }
+        else
+        {
+            TempData["Error"] = "Category not found.";
         }
 
         return RedirectToAction("ManageCategories");
     }
 
+    public IActionResult Messages()
+    {
+        var messages = _context.Messages.OrderByDescending(m => m.SentAt).ToList();
+        return View(messages);
+    }
 }
 
 

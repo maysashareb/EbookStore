@@ -1,0 +1,43 @@
+﻿@model IEnumerable<EbookStore.Models.Message>
+
+@{
+    ViewData["Title"] = "User Messages";
+}
+
+<h2>User Messages</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Sent At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var message in Model)
+        {
+            string subject = Uri.EscapeDataString("Response to Your Inquiry at WordVoyage");
+            string body = Uri.EscapeDataString(
+            $"Dear {message.Name},\n\n" +
+            "Thank you for reaching out to us! We appreciate your message and will respond to your inquiry shortly.\n\n" +
+            "Your Message:\n" +
+            $"{message.Content}\n\n" +
+            "Best regards,\n" +
+            "The WordVoyage Support Team"
+            );
+
+            <tr>
+                <td>@message.Name</td>
+                <td>
+                    <a href="mailto:@message.Email?subject=@subject&body=@body" class="btn btn-link">
+                        @message.Email
+                    </a>
+                </td>
+                <td>@message.Content</td>
+                <td>@message.SentAt.ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>

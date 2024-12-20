@@ -1,0 +1,2 @@
+﻿ALTER TABLE Books
+ADD RatingCount INT NULL DEFAULT 0;

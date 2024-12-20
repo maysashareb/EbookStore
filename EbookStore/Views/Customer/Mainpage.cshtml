@@ -31,7 +31,7 @@
 
     <!-- Marquee Section -->
     <div class="marquee">
-        <span>"Buy or borrow your favorite e-books and explore endless adventures at unbeatable prices!"</span>
+        <span>Buy or borrow your favorite e-books and explore endless adventures at unbeatable prices! - Total Books: @ViewBag.BookCount</span>
     </div>
     <!-- Sales Section -->
     <div class="sales-section">
@@ -45,7 +45,7 @@
                         <img src="@book.ImageUrl" alt="@book.Title" />
                         <div class="sales-details">
                             <h3>@book.Title</h3>
-                            <p>@book.Description</p>
+                            
                             <div class="price-container">
                                 <span class="original-price">@book.Price.ToString("C")</span>
                                 <span class="discounted-price">@book.DiscountPrice?.ToString("C")</span>
@@ -82,7 +82,7 @@
                     <div class="description">
                         <h3>@category.Name</h3>
                         <p>Explore the best books in the @category.Name category.</p>
-                        <a href="#" class="browse-btn">Browse</a>
+                        <a asp-controller="Customer" asp-action="BooksByCategory" asp-route-id="@category.Id" class="browse-btn">Browse</a>
                     </div>
                 </div>
             }
@@ -146,7 +146,6 @@
                     <img src="@Url.Content(book.ImageUrl)" alt="@book.Title" />
                     <div class="ebook-details">
                         <h3>@book.Title</h3>
-                        <p>@book.Description</p>
                         <p>Price: @book.Price.ToString("C")</p>
                         @if (User.Identity.IsAuthenticated)
                             @if (book != null)
@@ -167,10 +166,13 @@
     </div>
 
 
+
+
+
     <!-- Contact Section -->
     <div class="contact-section">
         <h2>GET IN TOUCH!</h2>
-        <form class="contact-form" action="/Contact/Send" method="post">
+        <form class="contact-form" asp-controller="Contact" asp-action="Send" method="post">
             <div class="form-row1">
                 <input type="text" name="Name" placeholder="Name" required />
             </div>
@@ -182,6 +184,20 @@
         </form>
     </div>
 
+    <div>
+        @* @foreach (var book in Model) *@
+        @* { *@
+        @*     <div class="book-item"> *@
+        @*         <img src="@book.ImageUrl" alt="@book.Title" class="book-image" /> *@
+        @*         <h3>@book.Title</h3> *@
+        @*         <p>Price: $@book.Price</p> *@
 
+        @*         <p>Average Rating: @(book.AverageRating?.ToString("0.0") ?? "Not Rated Yet")</p> *@
+        @*         <p>Rated by @book.RatingCount users</p> *@
+
+        @*         <a asp-controller="Book" asp-action="BookDetails" asp-route-id="@book.Id" class="btn btn-primary">View Details</a> *@
+            </div>
+        
+    </div>
 </body>
 </html>

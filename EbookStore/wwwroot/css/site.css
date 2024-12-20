@@ -144,3 +144,49 @@ body {
     transform: translateY(0);
     opacity: 1;
 }
+/* Small Navbar */
+nav.navbar {
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 30px; /* Reduced padding */
+    height: 50px; /* Set a fixed small height */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+    nav.navbar .logo {
+        font-size: 18px; /* Smaller font size */
+        font-weight: bold;
+        color: #333;
+    }
+
+    nav.navbar ul {
+        list-style: none;
+        display: flex;
+        gap: 15px; /* Reduce gap between links */
+        margin: 0; /* Remove default margin */
+        padding: 0;
+    }
+
+        nav.navbar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px; /* Smaller link font size */
+            transition: color 0.3s ease;
+        }
+
+            nav.navbar ul li a:hover {
+                color: #4a90e2;
+            }
+
+/* Optional: Search Input Adjustments */
+.search-container input {
+    height: 30px; /* Smaller input height */
+    font-size: 14px; /* Adjust text size */
+}

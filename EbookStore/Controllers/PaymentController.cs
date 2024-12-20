@@ -18,7 +18,7 @@ public class PaymentController : Controller
     {
         try
         {
-            // Example: Retrieve the total price dynamically (replace with your logic)
+          
             var totalPrice = "20.99"; // Replace this with your cart's total dynamically calculated
 
             // PayPal API credentials (replace with your real credentials)

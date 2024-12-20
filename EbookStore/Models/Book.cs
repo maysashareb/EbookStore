@@ -15,14 +15,14 @@ namespace EbookStore.Models
         public decimal Price { get; set; }
 
         public decimal BorrowPrice { get; set; } 
-
+        public bool IsBorrowable { get; set; }
         public int CategoryId { get; set; } // Keep this for the foreign key in Books
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
         public string? ImageUrl { get; set; } // Nullable
         public int Quantity { get; set; }
-      
-        public DateTime CreatedDate { get; set; } // Field to track creation date
+
+        public DateTime CreatedDate { get; set; } // This is non-nullable
         [Required]
         public string? Author { get; set; }
         public string? Publisher { get; set; }
@@ -36,8 +36,8 @@ namespace EbookStore.Models
         public int? AvailableCopiesBorrow { get; set; }
         public int PublisheYear { get; set; }
         public int AvailableCopies { get; set; }
-
-
+        public decimal? AverageRating { get; set; }
+        public int? RatingCount { get; set; }
 
     }
 }

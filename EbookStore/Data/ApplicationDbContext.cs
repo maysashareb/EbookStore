@@ -34,8 +34,11 @@
 
                 modelBuilder.Entity<CartItems>()
                .HasKey(ci => ci.CartItemID); // Define the primary key
+         
+         
+       
 
-            });
+    });
 
             base.OnModelCreating(modelBuilder);
         }
@@ -48,6 +51,8 @@
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<OrderItem> OrderItems { get; set; } = null!;
         public DbSet<CartItems> CartItems { get; set; } = null!;
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
 
     }
 }

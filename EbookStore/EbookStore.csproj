@@ -17,11 +17,8 @@
   <ItemGroup>
     <None Include="Models\Cart.cs" />
     <None Include="wwwroot\Content\advanture.jpg" />
-    <None Include="wwwroot\Content\fantasy.jpg" />
     <None Include="wwwroot\Content\howls.jpg" />
-    <None Include="wwwroot\Content\kids.jpg" />
     <None Include="wwwroot\Content\nikkis big weekend.jpg" />
-    <None Include="wwwroot\Content\romance.jpg" />
     <None Include="wwwroot\Content\thrilling advanture.jpg" />
     <None Include="wwwroot\Content\two sides.jpg" />
     <None Include="wwwroot\Content\videoplayback.mp4" />

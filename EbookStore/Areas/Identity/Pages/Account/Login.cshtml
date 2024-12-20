@@ -10,39 +10,45 @@
 </head>
 
 <body>
-    <div class="wrapper">
-        <form id="account" method="post">
-            <h2>@ViewData["Title"]</h2>
+   
 
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <div class="login-container">
+        <!-- Left Form Section -->
+        <div class="form-box">
+            <form id="account" method="post">
+                <h2>@ViewData["Title"]</h2>
 
-            <div class="input-field">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" required />
-                <label asp-for="Input.Email">Enter your email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
+                <div class="input-field">
+                    <label asp-for="Input.Email">Enter your email</label>
+                    <input asp-for="Input.Email" required />
+                </div>
 
-            <div class="input-field">
-                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" type="password" required />
-                <label asp-for="Input.Password">Enter your password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
+                <div class="input-field">
+                    <label asp-for="Input.Password">Enter your password</label>
+                    <input asp-for="Input.Password" type="password" required />
+                </div>
 
-            <div class="forget">
-                <label for="remember">
-                    <input type="checkbox" asp-for="Input.RememberMe" id="remember">
-                    <p>Remember me</p>
-                </label>
-                <a href="#">Forgot password?</a>
-            </div>
+                <div class="options">
+                    <label>
+                        <input type="checkbox" asp-for="Input.RememberMe">
+                        Remember me
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
 
-            <button type="submit" class="btn">Log In</button>
+                <button type="submit" class="btn">Log In</button>
 
-            <div class="register">
-                <p>Don't have an account? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register</a></p>
-            </div>
-        </form>
+                <p class="register">Don't have an account? <a href="#">Register</a></p>
+            </form>
+        </div>
+
+        <!-- Right Image Section -->
+        <div class="image-box">
+            <img src="~/images/decorative-image.png" alt="Decorative Image" />
+        </div>
     </div>
+
+
 
     @* <section> *@
     @*     <h3>Use another service to log in.</h3> *@
@@ -74,3 +80,5 @@
         <partial name="_ValidationScriptsPartial" />
     }
 </body>
+
+

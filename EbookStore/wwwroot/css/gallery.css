@@ -12,6 +12,14 @@
     text-align: center;
     margin-bottom: 20px; /* Space below subtitle */
 }
+/* Add this to your CSS file (gallery.css or any custom stylesheet) */
+.author-name {
+    color: gray; /* Set text color to gray */
+    font-size: 0.875rem; /* Set font size to smaller (equivalent to 14px) */
+    text-align: center; /* Center align the text */
+    display: block; /* Ensure it behaves as a block-level element for centering */
+}
+
 
 /* Ensures all product images have the same size */
 .product-image {

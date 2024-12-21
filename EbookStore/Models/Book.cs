@@ -8,7 +8,6 @@ namespace EbookStore.Models
         public int Id { get; set; }
         [Required]
         public string? Title { get; set; } // Nullable
-        [MaxLength(100)]
         public string? Description { get; set; } // Nullable
 
         [Required,DataType(DataType.Currency)]
@@ -18,7 +17,7 @@ namespace EbookStore.Models
         public bool IsBorrowable { get; set; }
         public int CategoryId { get; set; } // Keep this for the foreign key in Books
         [ForeignKey("CategoryId")]
-        public Category Category { get; set; }
+        public virtual Category Category { get; set; }
         public string? ImageUrl { get; set; } // Nullable
         public int Quantity { get; set; }
 
@@ -36,8 +35,10 @@ namespace EbookStore.Models
         public int? AvailableCopiesBorrow { get; set; }
         public int PublisheYear { get; set; }
         public int AvailableCopies { get; set; }
-        public decimal? AverageRating { get; set; }
-        public int? RatingCount { get; set; }
+
+        public int agelimt { get; set; }
+
+
 
     }
 }

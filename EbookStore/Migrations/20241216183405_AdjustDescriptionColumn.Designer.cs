@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EbookStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241216180815_new")]
-    partial class @new
+    [Migration("20241216183405_AdjustDescriptionColumn")]
+    partial class AdjustDescriptionColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

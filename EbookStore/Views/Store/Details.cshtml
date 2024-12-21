@@ -39,6 +39,16 @@
                                 <dt class="col-sm-3">Borrowing Price:</dt>
                                 <dd class="col-sm-9">@Html.DisplayFor(model => model.BorrowPrice)</dd>
 
+                                <dt class="col-sm-3">Available Copies:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.AvailableCopies)</dd>
+
+                                <dt class="col-sm-3">Available Borrow Copies:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.AvailableCopiesBorrow)</dd>
+
+                                <dt class="col-sm-3">Age limitation:</dt>
+                                <dd class="col-sm-9">@Html.DisplayFor(model => model.agelimt)</dd>
+
+
                                 <dt class="col-sm-3">Discount Price:</dt>
                                 <dd class="col-sm-9">
                                     @if (Model.IsDiscounted)

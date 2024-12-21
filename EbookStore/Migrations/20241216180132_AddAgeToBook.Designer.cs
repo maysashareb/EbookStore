@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EbookStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241216180815_new")]
-    partial class @new
+    [Migration("20241216180132_AddAgeToBook")]
+    partial class AddAgeToBook
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,7 +128,8 @@ namespace EbookStore.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("DiscountEndDate")
                         .HasColumnType("datetime2");

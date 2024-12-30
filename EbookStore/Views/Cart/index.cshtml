@@ -1,55 +1,136 @@
-﻿@model IEnumerable<EbookStore.Models.CartItems>
+﻿@model List<EbookStore.Models.CartItems>
 
-<h2>Your Cart</h2>
+<div class="container py-5">
+    <h1 class="text-center mb-4">Checkout</h1>
 
-@if (!Model.Any())
-{
-    <p>Your cart is empty.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Book</th>
-                <th>Transaction Type</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+    <div class="row">
+        <!-- Left Column: Cart Summary -->
+        <div class="col-lg-8">
+            <h3 class="mb-3">Item Summary</h3>
+            @if (Model.Count == 0)
             {
-                <tr>
-                    <td>@item.Book.Title</td>
-                    <td>@item.TransactionType</td>
-                    <td>@item.Quantity</td>
-                    <td>@(item.TransactionType == "Buy" ? item.Book.Price : item.Book.BorrowPrice)</td>
-                    <td>@(item.TransactionType == "Buy" ? item.Book.Price * item.Quantity : item.Book.BorrowPrice * item.Quantity)</td>
-                </tr>
+                <p>Your cart is empty.</p>
             }
-        </tbody>
-    </table>
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-2">
+                                    <img src="@item.Book.ImageUrl" class="img-fluid" alt="@item.Book.Title">
+                                </div>
+                                <div class="col-5">
+                                    <h5 class="card-title mb-1">@item.Book.Title</h5>
+                                    <p class="text-muted mb-0">Author: @item.Book.Author</p>
+                                </div>
+                                <div class="col-2 text-center">
+                                    <span class="d-block">Price</span>
+                                    <strong>@item.Book.Price.ToString("C")</strong>
+                                </div>
+                                <div class="col-2 text-center">
+                                    <span class="d-block">Qty</span>
+                                    <div class="input-group">
+                                        <button class="btn btn-outline-secondary btn-sm update-quantity" data-id="@item.CartItemID" data-action="decrease">-</button>
+                                        @* <input type="text" class="form-control text-center" value="@item.Quantity" readonly /> *@
+                                        @* <button class="btn btn-outline-secondary btn-sm update-quantity" data-id="@item.CartItemID" data-action="increase">+</button> *@
+                                    </div>
+                                </div>
+                                
+                                    <div class="col-1 text-center">
+                                        <form asp-controller="Cart" asp-action="RemoveFromCart" method="post">
+                                            @Html.AntiForgeryToken()
+                                        <input type="hidden" name="BookId" value="@item.Book.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">
+                                            Remove from Cart
+                                        </button>
+                                    </form>
+                                    </div>
 
-    <h4>Total: @Model.Sum(item => item.TransactionType == "Buy" ? item.Book.Price * item.Quantity : item.Book.BorrowPrice * item.Quantity)</h4>
+                                </div>
+                            </div>
+                        </div>
+                    
+                }
+            }
+        </div>
 
-    <div id="paypal-button-container"></div>
-}
-<form action="/Cart/Checkout" method="post">
-    @* <button type="submit" class="btn btn-primary">Checkout with PayPal</button> *@
-</form>
+        <!-- Right Column: Payment Options -->
+        <div class="col-lg-4">
+            <h3 class="mb-3">Payment Details</h3>
 
-<script src="https://www.paypal.com/sdk/js?client-id=AV8bBCDpoCX38F6pEGoVIh5H8aFnjpg7wgqcr75-N3aFBZlW4WUPIdzDoH36kWxICqWa4nGsR2PgGNTV"></script>
+            <!-- Payment Method Selection -->
+            <div class="form-group mb-3">
+                <label for="paymentMethod">Choose Payment Method:</label>
+                <select id="paymentMethod" class="form-select">
+                    <option value="" selected disabled>Select Payment Method</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="creditcard">Credit Card</option>
+                </select>
+            </div>
 
-<div id="paypal-button-container"></div>
-<script src="https://www.paypal.com/sdk/js?client-id=AV8bBCDpoCX38F6pEGoVIh5H8aFnjpg7wgqcr75-N3aFBZlW4WUPIdzDoH36kWxICqWa4nGsR2PgGNTV"></script>
+            <!-- PayPal Payment -->
+            <div id="paypal-section" style="display: none;">
+                <h4 class="mb-3">Pay with PayPal</h4>
+                <div id="paypal-button-container"></div>
+            </div>
 
-<div id="paypal-button-container"></div>
+            <!-- Credit Card Payment -->
+            <div id="creditcard-section" style="display: none;">
+                <h4 class="mb-3">Pay with Credit Card</h4>
+                <form asp-action="CheckoutWithCreditCard" method="post">
+                    <div class="form-group mb-3">
+                        <label for="cardName">Cardholder Name</label>
+                        <input type="text" id="cardName" name="cardName" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16" pattern="\d{16}" placeholder="1234 5678 9012 3456" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="expiryDate">Expiry Date</label>
+                        <input type="month" id="expiryDate" name="expiryDate" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" name="cvv" class="form-control" maxlength="3" pattern="\d{3}" placeholder="123" required />
+                    </div>
+                    <a href="/Account/Login?ReturnUrl=/Cart/Checkout" class="btn btn-primary">Checkout</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=AV8bBCDpoCX38F6pEGoVIh5H8aFnjpg7wgqcr75-N3aFBZlWUPIdzDoH36kWxICqWa4nGsR2PgGNTV&currency=USD"></script>
+
+<script>
+    // Show/Hide Payment Sections
+    document.getElementById('paymentMethod').addEventListener('change', function () {
+        const paypalSection = document.getElementById('paypal-section');
+        const creditcardSection = document.getElementById('creditcard-section');
+
+        if (this.value === 'paypal') {
+            paypalSection.style.display = 'block';
+            creditcardSection.style.display = 'none';
+        } else if (this.value === 'creditcard') {
+            creditcardSection.style.display = 'block';
+            paypalSection.style.display = 'none';
+        }
+    });
+
+    @{
+        ViewData["Title"] = "PayPal Integration";
+    }
+
+</script>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AV8bBCDpoCX38F6pEGoVIh5H8aFnjpg7wgqcr75-N3aFBZlW4WUPIdzDoH36kWxICqWa4nGsR2PgGNTV&currency=USD"></script>
 <script>
     paypal.Buttons({
         createOrder: function (data, actions) {
-            // Call your server to create the order
             return fetch('/Payment/CreateOrder', {
                 method: 'POST',
                 headers: {
@@ -57,39 +138,24 @@ else
                 }
             })
             .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Failed to create order');
-                }
                 return response.json();
             })
             .then(function (data) {
-                console.log('Order ID:', data.orderID); // Debug
                 return data.orderID;
-            })
-            .catch(function (error) {
-                console.error('CreateOrder Error:', error);
             });
         },
         onApprove: function (data, actions) {
-            // Call your server to capture the order
             return fetch(`/Payment/CaptureOrder?orderId=${data.orderID}`, {
                 method: 'POST'
             })
             .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Failed to capture order');
-                }
                 return response.json();
             })
             .then(function (details) {
-                console.log('Transaction Completed:', details);
                 alert('Transaction completed by ' + details.payer.name.given_name);
-            })
-            .catch(function (error) {
-                console.error('CaptureOrder Error:', error);
             });
         }
-    }).render('#paypal-button-container'); // Render PayPal button
-
+    }).render('#paypal-button-container');
 </script>
-<script src="https://www.paypal.com/sdk/js?client-id=AV8bBCDpoCX38F6pEGoVIh5H8aFnjpg7wgqcr75-N3aFBZlW4WUPIdzDoH36kWxICqWa4nGsR2PgGNTV&currency=USD"></script>
+
+

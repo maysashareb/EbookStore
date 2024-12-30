@@ -1,0 +1,126 @@
+﻿/* Updated body styling */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container for centering and layout */
+.confirmation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    background-color: #f0f2f5; /* Soft background color for the container */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling the confirmation card */
+.confirmation-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Button styling */
+.button {
+    display: inline-block;
+    padding: 12px 25px;
+    color: white;
+    background-color: #28a745; /* Green color for buttons */
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+    .button:hover {
+        background-color: #218838; /* Darker green for hover effect */
+    }
+
+/* Success title styling */
+.success-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Success icon styling */
+.success-icon {
+    font-size: 4rem;
+    color: #4caf50; /* Green icon color */
+    margin-bottom: 1rem;
+}
+
+/* Order details styling */
+.order-details {
+    text-align: left;
+    margin: 1.5rem auto;
+    background: #f7f8fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef; /* Light border for separation */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+    /* Styling inside the order details */
+    .order-details strong {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 0.8rem;
+        display: inline-block;
+    }
+
+    .order-details span {
+        display: inline-block;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #222;
+        margin-bottom: 0.5rem;
+    }
+
+/* Next steps styling */
+.next-steps {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 1.5rem;
+    line-height: 1.5;
+}
+
+    .next-steps a {
+        color: #007bff;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+        .next-steps a:hover {
+            color: #0056b3;
+        }
+
+/* Links styling */
+.links {
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+    .links a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .links a:hover {
+            text-decoration: underline;
+        }

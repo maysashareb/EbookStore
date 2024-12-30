@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EbookStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241214125628_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241229081514_updateBooksTable")]
+    partial class updateBooksTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,6 +109,7 @@ namespace EbookStore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Author")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("AvailableCopies")
@@ -144,8 +145,14 @@ namespace EbookStore.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsBuyOnly")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDiscounted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastBorrowedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MobiUrl")
                         .HasColumnType("nvarchar(max)");
@@ -166,13 +173,48 @@ namespace EbookStore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("agelimt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("bookrate")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("EbookStore.Models.Borrowing", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BorrowDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("Borrowings");
                 });
 
             modelBuilder.Entity("EbookStore.Models.Cart", b =>
@@ -255,8 +297,27 @@ namespace EbookStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
 
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BookTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("BorrowDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPurchase")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("OrderPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
@@ -270,6 +331,10 @@ namespace EbookStore.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -305,6 +370,45 @@ namespace EbookStore.Migrations
                     b.HasIndex("OrderID");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("EbookStore.Models.WaitingList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("BorrowedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("SendReminder")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("WaitingLists");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -455,6 +559,17 @@ namespace EbookStore.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("EbookStore.Models.Borrowing", b =>
+                {
+                    b.HasOne("EbookStore.Models.Book", "Book")
+                        .WithMany("Borrowings")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("EbookStore.Models.CartItems", b =>
                 {
                     b.HasOne("EbookStore.Models.Book", "Book")
@@ -491,6 +606,25 @@ namespace EbookStore.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("EbookStore.Models.WaitingList", b =>
+                {
+                    b.HasOne("EbookStore.Models.Book", "Book")
+                        .WithMany("WaitingLists")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EbookStore.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -542,6 +676,13 @@ namespace EbookStore.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EbookStore.Models.Book", b =>
+                {
+                    b.Navigation("Borrowings");
+
+                    b.Navigation("WaitingLists");
                 });
 
             modelBuilder.Entity("EbookStore.Models.Cart", b =>

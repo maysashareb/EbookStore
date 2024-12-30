@@ -1,0 +1,167 @@
+﻿<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f9;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .table-container {
+        margin: 0 auto;
+        max-width: 90%;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    thead {
+        background-color: #f4f6f9;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+        thead th {
+            font-size: 14px;
+            padding: 15px;
+            color: #495057;
+            font-weight: bold;
+        }
+
+    tbody tr {
+        transition: background-color 0.3s ease;
+    }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    tbody td {
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    .user-column {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .user-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        font-weight: bold;
+        color: #6c757d;
+    }
+
+    .status-pill {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .status-active {
+        background-color: #28a745;
+    }
+
+    .status-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .status-inactive {
+        background-color: #dc3545;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+    .text-muted {
+        color: #6c757d;
+        font-style: italic;
+    }
+</style>
+
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Book</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+                <th>Days Remaining</th>
+                @* <th>Status</th> *@
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td class="user-column">
+                        <div class="user-icon">@book.UserName.Substring(0, 1)</div>
+                        @book.UserName
+                    </td>
+                    <td>@book.BookTitle</td>
+                    <td>@book.BorrowDate.ToShortDateString()</td>
+                    <td>@book.ReturnDate.ToShortDateString()</td>
+                    <td class="@((book.DaysRemaining <= 5) ? "text-danger fw-bold text-center" : "text-success text-center")">
+                        @book.DaysRemaining
+                    </td>
+
+                    @* <td> *@
+                    @*     <span class="status-pill @(book.DaysRemaining <= 5 ? "status-warning" : "status-active")"> *@
+                    @*         @(book.DaysRemaining <= 5 ? "Warning" : "Active") *@
+                    @*     </span> *@
+                    @* </td> *@
+                    <td>
+                        @if (book.DaysRemaining <= 5)
+                        {
+                            <form asp-action="SendReminder" method="post" class="d-inline">
+                                <input type="hidden" name="borrowingId" value="@book.Id" />
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-bell"></i> Send Reminder
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Action</span>
+                        }
+                    </td>
+                </tr>
+            }
+            
+    </table>
+</div>

@@ -5,86 +5,60 @@
 }
 
 <head>
-	<link href="~/css/register.css" rel="stylesheet" />
+    <link href="~/css/Login.css" rel="stylesheet" asp-append-version="true" />
 </head>
 
-<div class="container">
-    <div class="card">
-        <div class="card-image">
-            <h2 class="card-heading">
-                Get started
-                <small>Let us create your account</small>
-            </h2>
+<body>
+    <div class="login-container">
+        <!-- Left Image Section -->
+        <div class="image-box">
+            <img src="~/Content/WORDVOYAGE.png" alt="Decorative Image" style="max-width: 300px; width: 100%; height: auto; border-radius: 8px;" />
         </div>
 
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="card-form">
-            <div class="input">
-                <input asp-for="Input.FirstName" type="text" class="input-field" required />
-                <label class="input-label">Full name</label>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-            </div>
+        <!-- Right Form Section -->
+        <div class="form-box">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <h2>@ViewData["Title"]</h2>
+                <small class="subtitle">Let us create your account</small>
 
-            <div class="input">
-                <input asp-for="Input.LastName" type="text" class="input-field" required />
-                <label class="input-label">Last Name</label>
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
+                <div class="input-field">
+                    <label asp-for="Input.FirstName">First Name</label>
+                    <input asp-for="Input.FirstName" required />
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                </div>
 
-            <div class="input">
-                <input asp-for="Input.Email" type="email" class="input-field"  required />
-                <label class="input-label">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
+                <div class="input-field">
+                    <label asp-for="Input.LastName">Last Name</label>
+                    <input asp-for="Input.LastName" required />
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                </div>
 
-            <div class="input">
-                <input asp-for="Input.Password" type="password" class="input-field" required />
-                <label class="input-label">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
+                <div class="input-field">
+                    <label asp-for="Input.Email">Email</label>
+                    <input asp-for="Input.Email" type="email" required />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
 
-            <div class="input">
-                <input asp-for="Input.ConfirmPassword" type="password" class="input-field" required />
-                <label class="input-label">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
+                <div class="input-field">
+                    <label asp-for="Input.Password">Password</label>
+                    <input asp-for="Input.Password" type="password" required />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
 
-            <div class="action">
-                <button id="registerSubmit" type="submit" class="action-button">Get Started</button>
-            </div>
-        </form>
+                <div class="input-field">
+                    <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                    <input asp-for="Input.ConfirmPassword" type="password" required />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
 
-        <div class="card-info">
-            <p>By signing up you are agreeing to our <a href="#">Terms and Conditions</a></p>
+                <button type="submit" class="btn">Register</button>
+
+                <p class="register">Already have an account? <a href="/Identity/Account/Login">Login</a></p>
+            </form>
         </div>
-
-        @* <section> *@
-        @*     <h3>Use another service to register.</h3> *@
-        @*     <hr /> *@
-        @*     @if ((Model.ExternalLogins?.Count ?? 0) == 0) *@
-        @*     { *@
-        @*         <div> *@
-        @*             <p> *@
-        @*                 There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article about setting up this ASP.NET application to support logging in via external services</a>. *@
-        @*             </p> *@
-        @*         </div> *@
-        @*     } *@
-        @*     else *@
-        @*     { *@
-        @*         <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal"> *@
-        @*             <div> *@
-        @*                 <p> *@
-        @*                     @foreach (var provider in Model.ExternalLogins!) *@
-        @*                     { *@
-        @*                         <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button> *@
-        @*                     } *@
-        @*                 </p> *@
-        @*             </div> *@
-        @*         </form> *@
-        @*     } *@
-        @* </section> *@
     </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>

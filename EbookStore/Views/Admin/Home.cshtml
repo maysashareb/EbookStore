@@ -5,87 +5,99 @@
 }
 
 <div class="container py-5">
-    <h1 class="text-orange mb-5 text-center">Welcome to the Admin Dashboard</h1>
+    <h1 class="text-orange mb-5 text-center">Admin Dashboard</h1>
+
     <div class="row g-4">
         <!-- Orders Card -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm text-center">
                 <div class="card-body">
-                    <i class="fas fa-shopping-cart fa-3x text-orange mb-3"></i>
-                    <h5 class="card-title">Orders</h5>
+                    <i class="fas fa-shopping-cart fa-4x text-orange mb-3"></i>
+                    <h5 class="card-title mt-3">Orders</h5>
                     <p class="card-text">Manage and track all customer orders efficiently.</p>
-                    <a asp-action="Orders" asp-controller="Admin" class="btn btn-orange">Manage Orders</a>
+                    <a asp-action="AllOrders" asp-controller="Admin" class="btn btn-orange btn-block">Manage Orders</a>
                 </div>
             </div>
         </div>
+
         <!-- Customers Card -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm text-center">
                 <div class="card-body">
-                    <i class="fas fa-users fa-3x text-orange mb-3"></i>
-                    <h5 class="card-title">Customers</h5>
+                    <i class="fas fa-users fa-4x text-orange mb-3"></i>
+                    <h5 class="card-title mt-3">Customers</h5>
                     <p class="card-text">View and manage all registered customers.</p>
-                    <a asp-action="Customers" asp-controller="Admin" class="btn btn-orange">Manage Customers</a>
+                    <a asp-action="Customers" asp-controller="Admin" class="btn btn-orange btn-block">Manage Customers</a>
                 </div>
             </div>
         </div>
         <!-- Books Card -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm text-center">
                 <div class="card-body">
-                    <i class="fas fa-book fa-3x text-orange mb-3"></i>
-                    <h5 class="card-title">Books</h5>
+                    <i class="fas fa-book fa-4x text-orange mb-3"></i>
+                    <h5 class="card-title mt-3">Books</h5>
                     <p class="card-text">Add, update, and manage the book inventory.</p>
-                    <a asp-action="Managebooks" asp-controller="Admin" class="btn btn-orange">Manage Books</a>
+                    <a asp-action="Managebooks" asp-controller="Admin" class="btn btn-orange btn-block">Manage Books</a>
                 </div>
             </div>
         </div>
         <!-- Categories Card -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm text-center">
                 <div class="card-body">
-                    <i class="fas fa-tags fa-3x text-orange mb-3"></i>
-                    <h5 class="card-title">Categories</h5>
+                    <i class="fas fa-tags fa-4x text-orange mb-3"></i>
+                    <h5 class="card-title mt-3">Categories</h5>
                     <p class="card-text">Organize books into relevant categories.</p>
-                    <a asp-action="ManageCategories" asp-controller="Admin" class="btn btn-orange">Manage Categories</a>
+                    <a asp-action="ManageCategories" asp-controller="Admin" class="btn btn-orange btn-block">Manage Categories</a>
                 </div>
             </div>
         </div>
         <!-- Waiting Lists Card -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm text-center">
                 <div class="card-body">
-                    <i class="fas fa-clock fa-3x text-orange mb-3"></i>
-                    <h5 class="card-title">Waiting Lists</h5>
+                    <i class="fas fa-clock fa-4x text-orange mb-3"></i>
+                    <h5 class="card-title mt-3">Waiting Lists</h5>
                     <p class="card-text">Monitor and manage book borrowing requests.</p>
-                    <a asp-action="WaitingLists" asp-controller="Admin" class="btn btn-orange">View Waiting Lists</a>
+                    <a asp-action="WaitingLists" asp-controller="Admin" class="btn btn-orange btn-block">View Waiting Lists</a>
                 </div>
             </div>
         </div>
         <!-- Messages Card -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm text-center">
                 <div class="card-body">
-                    <i class="fas fa-envelope fa-3x text-orange mb-3"></i>
-                    <h5 class="card-title">Messages</h5>
+                    <i class="fas fa-envelope fa-4x text-orange mb-3"></i>
+                    <h5 class="card-title mt-3">Messages</h5>
                     <p class="card-text">Review and respond to customer inquiries.</p>
-                    <a asp-action="Messages" asp-controller="Admin" class="btn btn-orange">Manage Messages</a>
+                    <a asp-action="Messages" asp-controller="Admin" class="btn btn-orange btn-block">Manage Messages</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Styles -->
+<!-- Updated Styles -->
 <style>
+    /* Base Styles */
+    body {
+        background-color: #f8f9fa;
+    }
+
     .text-orange {
         color: #FF6F00;
+        font-weight: bold;
     }
 
     .btn-orange {
         background-color: #FF6F00;
         color: white;
         border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
     }
 
         .btn-orange:hover {
@@ -95,10 +107,39 @@
 
     .card {
         border: none;
-        border-radius: 10px;
+        border-radius: 15px;
+        transition: all 0.3s ease-in-out;
+        background: #ffffff;
+        overflow: hidden;
     }
 
         .card:hover {
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
         }
+
+        .card .card-title {
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .card .card-text {
+            color: #777;
+            font-size: 14px;
+        }
+
+    .fa-4x {
+        font-size: 3rem;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .py-5 {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
 </style>

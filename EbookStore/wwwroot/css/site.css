@@ -18,7 +18,25 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    flex: 1; /* Allow the content to grow and push the footer down */
+    padding-bottom: 20px; /* Add space to avoid the footer overlapping the content */
+}
+
+footer.border-top.footer.text-muted {
+    background-color: #f8f9fa; /* Optional: Add background color for clarity */
+    text-align: center;
+    padding: 10px 0;
+    position: relative; /* Ensure the footer is part of the document flow */
+    bottom: 0;
+    width: 100%;
+    margin-top: auto; /* Push the footer to the bottom when content is short */
 }
 .search-container {
     margin: 20px auto;
@@ -143,4 +161,68 @@ body {
 .modal.show .modal-dialog {
     transform: translateY(0);
     opacity: 1;
+}
+/* Small Navbar */
+nav.navbar {
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 30px; /* Reduced padding */
+    height: 50px; /* Set a fixed small height */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+    nav.navbar .logo {
+        font-size: 18px; /* Smaller font size */
+        font-weight: bold;
+        color: #333;
+    }
+
+    nav.navbar ul {
+        list-style: none;
+        display: flex;
+        gap: 15px; /* Reduce gap between links */
+        margin: 0; /* Remove default margin */
+        padding: 0;
+    }
+
+        nav.navbar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px; /* Smaller link font size */
+            transition: color 0.3s ease;
+        }
+
+            nav.navbar ul li a:hover {
+                color: #4a90e2;
+            }
+
+/* Optional: Search Input Adjustments */
+.search-container input {
+    height: 30px; /* Smaller input height */
+    font-size: 14px; /* Adjust text size */
+}
+.badge {
+    font-size: 0.8rem; /* Smaller font size */
+    padding: 5px 8px; /* Adjust padding for the circle */
+    border-radius: 50%; /* Make it a perfect circle */
+    background-color: #6c757d; /* Gray color */
+    color: white; /* White text color for contrast */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for depth */
+}
+
+.cart-badge {
+    font-size: 0.7rem;
+    padding: 2px 5px;
+    border-radius: 50%;
+    background-color: #6c757d; /* Gray color */
+    color: white;
+    top: -5px;
+    start: 90%;
 }

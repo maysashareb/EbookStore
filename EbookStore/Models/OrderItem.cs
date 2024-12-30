@@ -1,17 +1,19 @@
 ﻿using EbookStore.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EbookStore.Models
+public class OrderItem
 {
-    public class OrderItem
-    {
-        public int OrderItemID { get; set; } // Primary Key
-        public int OrderID { get; set; } // Foreign Key to Orders
-        public int BookID { get; set; } // Foreign Key to Books table
-        public int Quantity { get; set; }
-        public decimal Price { get; set; } // Price of the book at the time of purchase
+    public int OrderItemID { get; set; } // Primary Key
 
-        // Navigation Properties
-        public Order Order { get; set; }
-        public Book Book { get; set; }
-    }
+    public int OrderID { get; set; } // Foreign Key to Orders
+    public int BookId { get; set; } // Foreign Key to Books
+    public int Quantity { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal Price { get; set; }
+
+   
+    // Navigation Properties
+    public virtual Order Order { get; set; } // Reference to Order
+    public virtual Book Book { get; set; } // Reference to Book
 }

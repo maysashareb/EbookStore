@@ -1,0 +1,31 @@
+﻿@model EbookStore.Models.Category
+
+@{
+    ViewData["Title"] = $"{Model.Name} Books";
+}
+
+<h1>@Model.Name Books</h1>
+<link rel="stylesheet" href="~/css/gallery.css" />
+<div class="row">
+    @if (Model.Books != null && Model.Books.Any())
+    {
+        @foreach (var book in Model.Books)
+        {
+            <div class="col-md-3 mb-4">
+                <a asp-controller="Book" asp-action="BookDetails" asp-route-id="@book.Id" class="text-decoration-none text-dark">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@book.ImageUrl" class="card-img-top" alt="@book.Title" />
+                        <div class="card-body">
+                            <h5>@book.Title</h5>
+                            <p>@book.Price.ToString("c")</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No books available in this category.</p>
+    }
+</div>

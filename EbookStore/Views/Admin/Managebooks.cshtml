@@ -1,98 +1,295 @@
-﻿@model EbookStore.Models.Book
+﻿@model List<EbookStore.Models.Book>
 
 <div class="container">
     <h1>Manage Books</h1>
+
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success">@TempData["Success"]</div>
     }
-    <form asp-action="ManageBooks" asp-controller="Admin" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="Title">Title</label>
-                <input type="text" id="Title" name="Title" class="form-control" required />
-            </div>
 
-            <div class="form-group">
-                <label for="Description">Description</label>
-                <textarea id="Description" name="Description" class="form-control" required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="Price">Price</label>
-                <input type="number" step="0.01" id="Price" name="Price" class="form-control" required />
-            </div>
-
-            <div class="form-group">
-                <label for="Publisher">Publisher</label>
-                <input type="text" id="Publisher" name="Publisher" class="form-control" required />
-            </div>
-
-            <div class="form-group">
-                <label for="PublishedYear">Published Year</label>
-                <input type="number" id="PublishedYear" name="PublishedYear" class="form-control" required />
-            </div>
-
-            <div class="form-group">
-                <label for="Author">Author</label>
-                <input type="text" id="Author" name="Author" class="form-control" required />
-            </div>
-
-            <div class="form-group">
-                <label for="BookCover">Book Cover</label>
-                <input type="file" id="BookCover" name="BookCover" class="form-control" required />
-            </div>
-
-            <!-- Checkbox to Mark as Borrowable -->
-            <div class="form-group">
-                <input type="checkbox" id="CanBorrow" name="CanBorrow" />
-                <label for="CanBorrow">Can Borrow</label>
-            </div>
-       
-
-            <!-- Borrowing Fields -->
-            <div id="borrowFields" style="display: none;">
-                <div class="form-group">
-                    <label for="BorrowPrice">Borrow Price</label>
-                    <input type="number" step="0.01" id="BorrowPrice" name="BorrowPrice" class="form-control" />
-                </div>
-
-                <div class="form-group">
-                    <label for="AvailableCopiesBorrow">Available Copies to Borrow</label>
-                    <input type="number" id="AvailableCopiesBorrow" name="AvailableCopiesBorrow" class="form-control" />
-                </div>
-            </div>
-        <!-- Categories Fields -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Borrow Price</th>
+                        <th>Category</th>
+                        <th>Image</th>
+                        <th>Quantity</th>
+                        <th>Is Borrowable</th>
+                        <th>Is Discounted</th>
+                        <th>Discount Price</th>
+                        <th>Discount End Date</th>
+                        <th>Created Date</th>
+                        <th>Publish Year</th>
+                        <th>Author</th>
+                        <th>Publisher</th>
+                        <th>Available Copies</th>
+                        <th>Available Borrow Copies</th>
+                        <th>Rating</th>
+                        <th>Rating Count</th>
+                        <th>Age Limit</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var book in Model)
+                    {
+                        <tr>
+                            <td>@book.Title</td>
+                            <td>@book.Description</td>
+                            <td>@book.Price.ToString("C")</td>
+                            <td>@book.BorrowPrice.ToString("C")</td>
+                            <td>
+                                @((ViewBag.Categories as List<EbookStore.Models.Category>)?.FirstOrDefault(c => c.Id == book.CategoryId)?.Name ?? "N/A")
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(book.ImageUrl))
+                                {
+                                    <img src="@book.ImageUrl" alt="@book.Title" style="max-height: 50px;" />
+                                }
+                            </td>
+                            <td>@book.Quantity</td>
+                            <td>@(book.IsBorrowable ? "Yes" : "No")</td>
+                            <td>@(book.IsDiscounted ? "Yes" : "No")</td>
+                            <td>@book.DiscountPrice?.ToString("C")</td>
+                            <td>@book.DiscountEndDate?.ToString("MM/dd/yyyy")</td>
+                            <td>@book.CreatedDate.ToString("MM/dd/yyyy")</td>
+                            <td>@book.PublisheYear</td>
+                            <td>@book.Author</td>
+                            <td>@book.Publisher</td>
+                            <td>@book.AvailableCopies</td>
+                            <td>@book.AvailableCopiesBorrow</td>
+                            <td>@book.AverageRating</td>
+                            <td>@book.RatingCount</td>
+                            <td>@book.agelimt</td>
+                            <td>
+                                <form asp-action="DeleteBook" asp-controller="Admin" method="post">
+                                    <input type="hidden" name="id" value="@book.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p>No books found.</p>
+    }
+</div>
+<!-- Form to Add a New Book -->
+<h2 class="mt-5">Add New Book</h2>
+<form asp-action="ManageBooks" asp-controller="Admin" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="Title">Title</label>
+        <input type="text" id="Title" name="Title" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="Description">Description</label>
+        <textarea id="Description" name="Description" class="form-control" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="Price">Price</label>
+        <input type="number" step="0.01" id="Price" name="Price" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="BorrowPrice">Borrow Price</label>
+        <input type="number" step="0.01" id="BorrowPrice" name="BorrowPrice" class="form-control" />
         <div class="form-group">
             <label for="CategoryId">Category</label>
             <select id="CategoryId" name="CategoryId" class="form-control" required>
                 <option value="" disabled selected>Select a category</option>
-                @foreach (var category in ViewBag.Categories as List<Category>)
+                @if (ViewBag.Categories != null)
                 {
-                    <option value="@category.Id">@category.Name</option>
+                    foreach (var category in ViewBag.Categories as List<EbookStore.Models.Category>)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                }
+                else
+                {
+                    <option value="" disabled>No categories available</option>
                 }
             </select>
         </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-
+    <div class="form-group">
+        <label for="BookCover">Book Cover</label>
+        <input type="file" id="BookCover" name="BookCover" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="Quantity">Quantity</label>
+        <input type="number" id="Quantity" name="Quantity" class="form-control" required />
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="IsBorrowable" name="IsBorrowable" class="form-check-input" />
+        <label for="IsBorrowable" class="form-check-label">Is Borrowable</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="IsDiscounted" name="IsDiscounted" class="form-check-input" />
+        <label for="IsDiscounted" class="form-check-label">Is Discounted</label>
+    </div>
+    <div class="form-group">
+        <label for="DiscountPrice">Discount Price</label>
+        <input type="number" step="0.01" id="DiscountPrice" name="DiscountPrice" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="DiscountEndDate">Discount End Date</label>
+        <input type="date" id="DiscountEndDate" name="DiscountEndDate" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="PublisheYear">Publish Year</label>
+        <input type="number" id="PublisheYear" name="PublisheYear" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="Author">Author</label>
+        <input type="text" id="Author" name="Author" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="Publisher">Publisher</label>
+        <input type="text" id="Publisher" name="Publisher" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="AvailableCopies">Available Copies</label>
+        <input type="number" id="AvailableCopies" name="AvailableCopies" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="AvailableCopiesBorrow">Available Borrow Copies</label>
+        <input type="number" id="AvailableCopiesBorrow" name="AvailableCopiesBorrow" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="AgeLimt">Age Limit</label>
+        <input type="number" id="AgeLimt" name="AgeLimt" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Add Book</button>
+</form>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const canBorrowCheckbox = document.getElementById('CanBorrow');
-        const borrowFields = document.getElementById('borrowFields');
 
-        // Toggle visibility on checkbox change
-        canBorrowCheckbox.addEventListener('change', function () {
-            if (this.checked) {
-                borrowFields.style.display = 'block';
-            } else {
-                borrowFields.style.display = 'none';
-            }
-        });
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
 
-        // Ensure correct initial state
-        if (!canBorrowCheckbox.checked) {
-            borrowFields.style.display = 'none';
+    .container {
+        margin: 20px auto;
+        max-width: 1200px;
+        background: #ffffff;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 28px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #4CAF50;
+    }
+
+    /* Table Styles */
+    .custom-table {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table thead {
+            background-color: #4CAF50;
+            color: white;
+            text-transform: uppercase;
         }
-    });
-</script>
+
+        .table th,
+        .table td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+            transition: background-color 0.3s ease;
+        }
+
+    .book-image {
+        max-height: 60px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-danger {
+        background-color: #f44336;
+        color: white;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+    /* No Books Message */
+    .no-books {
+        text-align: center;
+        color: #888;
+        font-size: 16px;
+        margin: 20px 0;
+    }
+
+    <style >
+    .container {
+        font-size: 12px; /* Adjust the font size for the entire container */
+    }
+
+    table.table {
+        font-size: 10px; /* Adjust the font size specifically for the table */
+    }
+
+        table.table th {
+            font-weight: bold;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+        }
+
+        table.table td,
+        table.table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+    table img {
+        max-height: 40px;
+    }
+
+    .btn-sm {
+        font-size: 10px; /* Adjust the font size for small buttons */
+    }
+</style>
+
+</style>

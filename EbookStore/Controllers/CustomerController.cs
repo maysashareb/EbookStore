@@ -2,7 +2,9 @@
 using EbookStore.Models; // Namespace for the Book model
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Claims;
 
 public class CustomerController : Controller
 {
@@ -21,7 +23,8 @@ public class CustomerController : Controller
         var categories = _context.Categories.ToList();
         // Call the function to get the latest 4 books
         var latestBooks = GetLatestBooks(4);
-
+        var books = _context.Books.ToList();
+        ViewBag.BookCount = books.Count;
         // Fetch discounted books
         var discountedBooks = _context.Books
             .Where(b => b.IsDiscounted && b.DiscountEndDate > DateTime.Now)
@@ -35,6 +38,25 @@ public class CustomerController : Controller
 
         return View();
     }
+    public IActionResult PersonalLibrary()
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(); // Ensure the user is logged in
+        }
+
+        var purchasedBooks = _context.OrderItems
+            .Include(oi => oi.Book) // Include book details
+            .Where(oi => oi.Order.UserID == userId) // Filter by the current user's orders
+            .Select(oi => oi.Book) // Select only the books
+            .Distinct() // Ensure no duplicate books
+            .ToList();
+
+        return View(purchasedBooks);
+    }
+
 
     // Function to fetch the latest books
     private List<Book> GetLatestBooks(int count)
@@ -59,7 +81,18 @@ public class CustomerController : Controller
         // Logic to send a message to the admin
         return RedirectToAction("Contact");
     }
- 
-    
+
+    public IActionResult BooksByCategory(int id) // id = CategoryId
+    {
+        var category = _context.Categories
+                               .Include(c => c.Books) // Eager load related books
+                               .FirstOrDefault(c => c.Id == id);
+
+        if (category == null)
+            return NotFound();
+
+        return View(category); // Pass the category and books to the view
+    }
+
 
 }

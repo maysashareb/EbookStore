@@ -64,17 +64,25 @@ namespace EbookStore.Controllers
         }
 
 
+        [HttpPost]
+
         public IActionResult Delete(int id)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
-            if (category == null) return NotFound();
-
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
+            var category = _context.Categories.Find(id); // Find the category
+            if (category != null)
+            {
+                _context.Categories.Remove(category); // Remove it from the database
+                _context.SaveChanges(); // Commit the changes
+                TempData["Success"] = "Category deleted successfully!";
+            }
+            else
+            {
+                TempData["Error"] = "Category not found.";
+            }
+            return RedirectToAction("ManageCategories");
         }
 
-    }
 
+    }
 }
 

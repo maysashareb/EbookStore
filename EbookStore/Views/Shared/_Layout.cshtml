@@ -37,19 +37,41 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <!-- Common Navigation Links -->
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Mainpage">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        <!-- Common Navigation Links for All Users -->
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Mainpage">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark position-relative" asp-controller="Cart" asp-action="Index">
+                                    <i class="fas fa-shopping-cart" style="font-size: 1.3rem;"></i> <!-- Cart icon -->
+                                    <span id="cart-count" class="badge cart-badge position-absolute top-0 start-100 translate-middle">
+                                        0 <!-- Default cart count -->
+                                    </span>
+                                </a>
+                            </li>
+                        }
 
-                        <!-- Conditional Navigation for Roles -->
+                        <!-- Authenticated User-Specific Links -->
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="@Url.Action("PersonalLibrary", "Customer")">Personal Library</a>
+                            </li>
+                        }
+
+                        <!-- Admin-Specific Navigation -->
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Home">Home</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Home">Admin Home</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageBooks">Manage Books</a>
@@ -58,27 +80,27 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Manage Categories</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Waiting Lists</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="WaitingLists">Waiting Lists</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageCategories">Messages</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Messages">Messages</a>
                             </li>
                         }
-                        else if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Categories">Categories</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Cart" asp-action="Index">My Cart</a>
-                            </li>
 
-
-                        }
+                        @* <!-- Unauthenticated User Links --> *@
+                        @* @if (!User.Identity.IsAuthenticated) *@
+                        @* { *@
+                        @*     <li class="nav-item"> *@
+                        @*         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a> *@
+                        @*     </li> *@
+                        @*     <li class="nav-item"> *@
+                        @*         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a> *@
+                        @*     </li> *@
+                        @* } *@
                     </ul>
+
+                </div>
+
 
                     
                    
@@ -174,6 +196,25 @@
         });
 
 
+    </script>
+    <script>
+        // Function to fetch the cart count
+        async function updateCartCount() {
+            try {
+                const response = await fetch('/Cart/GetCartCount'); // API endpoint to get cart count
+                if (response.ok) {
+                    const count = await response.json(); // Expecting the server to return a number
+                    document.getElementById('cart-count').textContent = count;
+                } else {
+                    console.error('Failed to fetch cart count:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching cart count:', error);
+            }
+        }
+
+        // Update cart count on page load
+        document.addEventListener('DOMContentLoaded', updateCartCount);
     </script>
 
 </body>

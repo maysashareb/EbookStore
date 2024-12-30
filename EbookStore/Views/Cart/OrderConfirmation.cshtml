@@ -1,0 +1,33 @@
+﻿@model EbookStore.Models.Order
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="~/wwwroot/css/styles.css">
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="confirmation-card">
+            <h1 class="success-title">Order Confirmed!</h1>
+            <p class="message">Thank you,, for your order!</p>
+            <p class="order-details">
+                <strong>Order Details:</strong><br>
+                Order ID: <span>@Model.OrderID</span><br>
+                Order Date: <span>@Model.OrderDate.ToString("MMMM dd, yyyy")</span><br>
+                Total Amount: <span>@Model.TotalAmount.ToString("C")</span><br>
+                Payment Status: <span>@Model.PaymentStatus</span><br>
+                Payment Method: <span>@Model.PaymentMethod</span>
+            </p>
+          
+            <p class="next-steps">
+                You can now view your purchased items in your <a href="/Customer/PersonalLibrary">personal library</a>.
+                If you have any questions, feel free to <a href="/Contact">contact us</a>.
+            </p>
+            <a href="/" class="button">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

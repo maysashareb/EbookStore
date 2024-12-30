@@ -92,6 +92,7 @@ namespace EbookStore.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                // Find the user by email
                 var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
                 if (user == null)
                 {
@@ -99,34 +100,33 @@ namespace EbookStore.Areas.Identity.Pages.Account
                     return Page();
                 }
 
+                //// Ensure the email is confirmed
+                //if (!user.EmailConfirmed)
+                //{
+                //    ModelState.AddModelError(string.Empty, "Email not confirmed. Please confirm your email.");
+                //    return Page();
+                //}
+
+                // Attempt to sign in
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
 
+                    // Get the roles of the user
                     var roles = await _signInManager.UserManager.GetRolesAsync(user);
+
+                    // Redirect based on role if returnUrl is the default (home page)
                     if (roles.Contains("Admin") && returnUrl == Url.Content("~/"))
                     {
-
                         return RedirectToAction("Home", "Admin");
                     }
                     else if (roles.Contains("User") && returnUrl == Url.Content("~/"))
                     {
                         return RedirectToAction("Mainpage", "Customer");
-                        // Get the roles of the user
-                        var role = await _signInManager.UserManager.GetRolesAsync(user);
-
-                        // Redirect based on role if returnUrl is the default (home page)
-                        if (roles.Contains("Admin") && returnUrl == Url.Content("~/"))
-                        {
-                            return RedirectToAction("Home", "Admin");
-                        }
-                        else if (roles.Contains("User") && returnUrl == Url.Content("~/"))
-                        {
-                            return RedirectToAction("Mainpage", "Customer");
-                        }
                     }
 
+                    // Redirect to the original requested page
                     return LocalRedirect(returnUrl);
                 }
 
@@ -134,6 +134,7 @@ namespace EbookStore.Areas.Identity.Pages.Account
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
+
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
@@ -143,6 +144,7 @@ namespace EbookStore.Areas.Identity.Pages.Account
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
 
+            // If we got this far, something failed; redisplay the form
             return Page();
         }
 

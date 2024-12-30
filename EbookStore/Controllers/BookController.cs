@@ -35,6 +35,18 @@ namespace EbookStore.Controllers
             ViewBag.DiscountedBooks = booksOnSale;
 
         }
+        [HttpGet]
+        public IActionResult DownloadFile(string fileName)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Content/Formats", fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("File not found.");
+            }
+            var fileBytes = System.IO.File.ReadAllBytes(filePath);
+            var contentType = "application/octet-stream"; // Default MIME type
+            return File(fileBytes, contentType, fileName);
+        }
 
         // Display details of a specific book
         public IActionResult Details(int id)
@@ -121,16 +133,60 @@ namespace EbookStore.Controllers
             return Json(books);
         }
 
-        // GET: /Book/BookDetails/{id}
-        public IActionResult BookDetails(int id)
+        //[AllowAnonymous]
+        //public IActionResult Details(int id)
+        //{
+        //    var book = _context.Books.FirstOrDefault(b => b.Id == id);
+        //    if (book == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    // Calculate the average rating
+        //    var averageRating = _context.Ratings
+        //        .Where(r => r.BookId == id)
+        //        .Average(r => (double?)r.Value);
+
+        //    ViewBag.AverageRating = averageRating?.ToString("0.0") ?? "Not Rated Yet";
+
+        //    return View(book);
+        //}
+
+        [HttpPost]
+        public IActionResult SubmitRating(IFormFile Photo, string Comment, int Rating, int BookId)
         {
-            var book = _context.Books.FirstOrDefault(b => b.Id == id);
-            if (book == null)
+            if (Rating > 0 && BookId > 0)
             {
-                return NotFound(); // Proper ASP.NET Core error response
+                var rating = new Rating
+                {
+                    BookId = BookId,
+                    Value = Rating,
+                    Comment = Comment,
+                    PhotoPath = SavePhoto(Photo), // Save the photo and get its path
+                    SubmittedAt = DateTime.Now
+                };
+
+                _context.Ratings.Add(rating);
+                _context.SaveChanges();
+                return Json(new { success = true });
             }
-            return View(book); // Return a view to display book details
+            return Json(new { success = false });
         }
+
+
+        private string SavePhoto(IFormFile file)
+        {
+            if (file != null)
+            {
+                var path = Path.Combine("wwwroot/uploads", file.FileName);
+                using var stream = new FileStream(path, FileMode.Create);
+                file.CopyTo(stream);
+                return "/uploads/" + file.FileName;
+            }
+            return null;
+        }
+
+
 
         // Get discounted books
         public IActionResult Sales()

@@ -1,0 +1,2 @@
+﻿ALTER TABLE Books
+ADD AverageRating DECIMAL(3,2) NULL DEFAULT 0.0;

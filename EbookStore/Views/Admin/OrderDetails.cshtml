@@ -1,0 +1,33 @@
+﻿@model EbookStore.Models.Order
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+</head>
+<body>
+    <h1>Order Details</h1>
+    <p><strong>Order ID:</strong> @Model.OrderID</p>
+    <p><strong>User ID:</strong> @Model.UserID</p>
+    <p><strong>Order Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy")</p>
+    <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</p>
+    <p><strong>Payment Status:</strong> @Model.PaymentStatus</p>
+    <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
+
+    <h2>Order Items</h2>
+    <ul>
+        @foreach (var item in Model.OrderItems)
+        {
+            <li>
+                <strong>Book Title:</strong> @item.Book.Title <br>
+                <strong>Quantity:</strong> @item.Quantity <br>
+                <strong>Price:</strong> @item.Price.ToString("C")
+            </li>
+        }
+    </ul>
+
+    <a href="/Admin/AllOrders">Back to All Orders</a>
+</body>
+</html>

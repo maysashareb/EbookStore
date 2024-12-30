@@ -1,18 +1,32 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EbookStore.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace EbookStore.Models
 {
     public class CartItems
     {
+        [Key]
         public int CartItemID { get; set; }
-        public int CartID { get; set; }
-        public int BookID { get; set; }
-        public int Quantity { get; set; }
 
         [Required]
-        public string TransactionType { get; set; }
+        [ForeignKey("Cart")]
+        public int CartID { get; set; }
 
-        public Cart Cart { get; set; }
-        public Book Book { get; set; }
+        [Required]
+        [ForeignKey("Book")]
+        public int BookId { get; set; }
+
+        [Required]
+        public int Quantity { get; set; }
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Price { get; set; }
+
+
+
+
+        public virtual Cart Cart { get; set; }
+        public virtual Book Book { get; set; }
     }
 }

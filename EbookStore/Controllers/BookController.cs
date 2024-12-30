@@ -35,6 +35,18 @@ namespace EbookStore.Controllers
             ViewBag.DiscountedBooks = booksOnSale;
 
         }
+        [HttpGet]
+        public IActionResult DownloadFile(string fileName)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Content/Formats", fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("File not found.");
+            }
+            var fileBytes = System.IO.File.ReadAllBytes(filePath);
+            var contentType = "application/octet-stream"; // Default MIME type
+            return File(fileBytes, contentType, fileName);
+        }
 
         // Display details of a specific book
         public IActionResult Details(int id)

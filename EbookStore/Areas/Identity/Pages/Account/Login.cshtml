@@ -6,14 +6,16 @@
 }
 
 <head>
-    <link href="~/css/Login.css" rel="stylesheet" />
+    <link href="~/css/Login.css" rel="stylesheet" asp-append-version="true" />
 </head>
-
 <body>
-   
-
     <div class="login-container">
-        <!-- Left Form Section -->
+        <!-- Left Image Section -->
+        <div class="image-box">
+            <img src="~/Content/WORDVOYAGE.png" alt="Decorative Image" style="max-width: 250px; width: 120%; height: auto; box-shadow: none; border-radius: 8px;" />
+        </div>
+
+        <!-- Right Form Section -->
         <div class="form-box">
             <form id="account" method="post">
                 <h2>@ViewData["Title"]</h2>
@@ -33,22 +35,14 @@
                         <input type="checkbox" asp-for="Input.RememberMe">
                         Remember me
                     </label>
-                    <a href="#">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn">Log In</button>
 
-                <p class="register">Don't have an account? <a href="#">Register</a></p>
+                <p class="register">Don't have an account? <a href="/Identity/Account/Register">Register</a></p>
             </form>
         </div>
-
-        <!-- Right Image Section -->
-        <div class="image-box">
-            <img src="~/images/decorative-image.png" alt="Decorative Image" />
-        </div>
     </div>
-
-
 
     @* <section> *@
     @*     <h3>Use another service to log in.</h3> *@
@@ -80,5 +74,3 @@
         <partial name="_ValidationScriptsPartial" />
     }
 </body>
-
-

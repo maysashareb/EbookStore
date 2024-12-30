@@ -1,0 +1,174 @@
+﻿@model List<EbookStore.Models.Book>
+
+<div class="container">
+    <h1>Your Personal Library</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <p>You have not purchased any books yet. Explore our <a href="/store">store</a> to find your next read!</p>
+        </div>
+    }
+    else
+    {
+        <div class="library-container">
+            @foreach (var book in Model)
+            {
+                <div class="book-card">
+                    <img src="@book.ImageUrl" alt="@book.Title" class="book-image" />
+                    <div class="book-info">
+                        <h2 class="book-title">@book.Title</h2>
+                        <p class="book-meta">Author: @book.Author</p>
+                        <p class="book-meta">Category: @book.Category</p>
+                        <p class="book-price">@book.Price.ToString("C")</p>
+
+                        <div class="download-buttons">
+                            @if (!string.IsNullOrEmpty(book.PdfUrl))
+                            {
+                                <a href="@book.PdfUrl" download>Download PDF</a>
+                            }
+                            @if (!string.IsNullOrEmpty(book.EpubUrl))
+                            {
+                                <a href="@book.EpubUrl" download>Download EPUB</a>
+                            }
+                            @if (!string.IsNullOrEmpty(book.MobiUrl))
+                            {
+                                <a href="@book.MobiUrl" download>Download MOBI</a>
+                            }
+                            @if (!string.IsNullOrEmpty(book.Fb2Url))
+                            {
+                                <a href="@book.Fb2Url" download>Download FB2</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
+<style>
+    /* General styles */
+    body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9; /* Light gray background for better contrast */
+        color: #333;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 15px;
+    }
+    /* Center the heading */
+    h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 30px;
+    }
+    /* Library container */
+    .library-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px; /* Space between book cards */
+    }
+
+    /* Book card styles */
+    .book-card {
+        display: flex;
+        align-items: center;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: transform 0.3s ease-in-out;
+        overflow: hidden;
+    }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .book-image {
+        flex-shrink: 10;
+        width: 100px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 20px;
+        border: 1px solid #ddd;
+    }
+
+    .book-info {
+        flex: 1;
+    }
+
+    .book-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #222;
+        margin-bottom: 10px;
+    }
+
+    .book-meta {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 5px;
+    }
+
+    .book-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #28a745;
+        margin-top: 10px;
+    }
+
+    /* Download button styles */
+    .download-buttons {
+        margin-top: 15px;
+        display: flex;
+        gap: 15px; /* Space between buttons */
+        flex-wrap: wrap; /* Ensure buttons wrap on smaller screens */
+    }
+
+        .download-buttons a {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #ff8c00; /* Orange button */
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .download-buttons a:hover {
+                background-color: #cc7000; /* Darker orange on hover */
+            }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .book-card {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .book-image {
+            margin-bottom: 15px;
+        }
+
+        .download-buttons {
+            justify-content: center;
+        }
+    }
+</style>

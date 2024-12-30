@@ -10,6 +10,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="~/css/Mainpagecss.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
     <title>Booktopia</title>
    
@@ -70,28 +72,35 @@
         </div>
     </div>
 
-  
     <!-- Browse by Category Section -->
-    <div class="latest-buzz">
-        @if (ViewBag.Categories != null)
-        {
-            foreach (var category in ViewBag.Categories)
+    <div class="latest-buzz swiper-container">
+        <div class="swiper-wrapper">
+            @if (ViewBag.Categories != null)
             {
-                <div class="latest-buzz-item">
-                    <img src="@category.Image" alt="@category.Name" />
-                    <div class="description">
-                        <h3>@category.Name</h3>
-                        <p>Explore the best books in the @category.Name category.</p>
-                        <a asp-controller="Customer" asp-action="BooksByCategory" asp-route-id="@category.Id" class="browse-btn">Browse</a>
+                foreach (var category in ViewBag.Categories)
+                {
+                    <div class="swiper-slide latest-buzz-item">
+                        <img src="@category.Image" alt="@category.Name" />
+                        <div class="description">
+                            <h3>@category.Name</h3>
+                            <p>Explore the best books in the @category.Name category.</p>
+                            <a asp-controller="Customer" asp-action="BooksByCategory" asp-route-id="@category.Id" class="browse-btn">Browse</a>
+                        </div>
                     </div>
-                </div>
+                }
             }
-        }
-        else
-        {
-            <p>No categories available.</p>
-        }
+            else
+            {
+                <p>No categories available.</p>
+            }
+        </div>
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
+        <!-- Navigation -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
     </div>
+
 
 
     <!-- FAQ Section -->
@@ -201,3 +210,36 @@
     </div>
 </body>
 </html>
+<script>
+            const swiper = new Swiper('.swiper-container', {
+        slidesPerView: 2, // Start with 2 visible slides
+        spaceBetween: 20, // Space between slides
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        loop: false, // Disable infinite looping
+        slidesPerGroup: 2, // Swipe 2 slides at a time
+        watchOverflow: true, // Prevents blank space with fewer slides
+        breakpoints: {
+            // When the viewport width is larger than 768px
+            768: {
+                slidesPerView: 5, // Show 5 slides in the second "swipe"
+                slidesPerGroup: 4, // Swipe by 5 slides at a time
+            },
+        },
+        on: {
+            reachEnd: function () {
+                this.allowSlideNext = false; // Prevent further swiping to the right when last slide is reached
+            },
+            fromEdge: function () {
+                this.allowSlideNext = true; // Re-enable swiping right after moving left
+            },
+        },
+    });
+
+</script>

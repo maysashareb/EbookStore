@@ -2,6 +2,8 @@
 using EbookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using static System.Reflection.Metadata.BlobBuilder;
 
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
@@ -26,11 +28,19 @@ public class AdminController : Controller
 
         return View();
     }
+
+
     [HttpGet]
     public IActionResult ManageBooks()
     {
-        ViewBag.Categories = _context.Categories.ToList(); // Populate dropdown
-        return View();
+        // Retrieve categories for dropdown
+        ViewBag.Categories = _context.Categories.ToList();
+
+        // Retrieve all books to display in the list
+        var books = _context.Books.ToList();
+
+        // Pass the books to the view
+        return View(books);
     }
 
     [HttpPost]
@@ -38,13 +48,16 @@ public class AdminController : Controller
     {
         if (ModelState.IsValid)
         {
-            // Ensure a valid category is selected
+            // Validate the selected category exists
             if (_context.Categories.Any(c => c.Id == model.CategoryId))
             {
-                // Save the uploaded file
                 if (bookCover != null && bookCover.Length > 0)
                 {
-                    var filePath = Path.Combine("wwwroot/Content/books", bookCover.FileName);
+                    var uploadDirectory = Path.Combine("wwwroot", "Content", "books");
+                    Directory.CreateDirectory(uploadDirectory);
+                    var filePath = Path.Combine(uploadDirectory, bookCover.FileName);
+
+                    // Save the uploaded file
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         bookCover.CopyTo(stream);
@@ -52,11 +65,14 @@ public class AdminController : Controller
                     model.ImageUrl = $"/Content/books/{bookCover.FileName}";
                 }
 
+                // Set the created date for the book
+                model.CreatedDate = DateTime.Now;
+
+                // Add the new book to the database
                 _context.Books.Add(model);
                 _context.SaveChanges();
 
                 TempData["Success"] = "Book added successfully!";
-                return RedirectToAction("ManageBooks");
             }
             else
             {
@@ -64,9 +80,26 @@ public class AdminController : Controller
             }
         }
 
-        ViewBag.Categories = _context.Categories.ToList(); // Repopulate dropdown
-        return View(model);
+        // Repopulate ViewBag for dropdown and reload the books list
+        ViewBag.Categories = _context.Categories.ToList();
+        var books = _context.Books.ToList();
+
+        // Pass updated books list to the view
+        return View(books);
     }
+    [HttpGet]
+    public IActionResult AllOrders()
+    {
+        // Fetch all orders with related data
+        var orders = _context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Book)
+            .OrderByDescending(o => o.OrderDate) // Optional: sort by most recent
+            .ToList();
+
+        return View(orders);
+    }
+
     [HttpGet]
     public IActionResult ManageCategories()
     {
@@ -115,7 +148,7 @@ public class AdminController : Controller
             foreach (var book in booksToDelete)
             {
                 // Delete related OrderItems for each book
-                var orderItems = _context.OrderItems.Where(oi => oi.BookID == book.Id).ToList();
+                var orderItems = _context.OrderItems.Where(oi => oi.BookId== book.Id).ToList();
                 _context.OrderItems.RemoveRange(orderItems);
 
                 _context.Books.Remove(book); // Delete the book
@@ -140,6 +173,20 @@ public class AdminController : Controller
         var messages = _context.Messages.OrderByDescending(m => m.SentAt).ToList();
         return View(messages);
     }
+    [HttpGet]
+    public IActionResult OrderDetails(int orderId)
+    {
+        var order = _context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Book)
+            .FirstOrDefault(o => o.OrderID == orderId);
+
+        if (order == null)
+            return NotFound("Order not found.");
+
+        return View(order);
+    }
+
 }
 
 

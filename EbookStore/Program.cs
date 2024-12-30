@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EbookStore.Data;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +15,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddTransient<EmailService>();
 
 // Configure Identity with custom AppUser
 builder.Services.AddDefaultIdentity<AppUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequiredUniqueChars = 0;
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 8;
@@ -37,6 +40,10 @@ builder.Services.AddSingleton<PayPalService>(provider =>
         configuration["PayPal:EDtGhU509jfIRWjq4n2zqgbloZKUi0gm4yDYqRtfLNgqmrpprH_Gv_-_-SvU_5rixZbXNFx15bImtzep"]
     );
 });
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -50,6 +57,13 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Make the cookie HTTP-only
     options.Cookie.IsEssential = true; // Make the cookie essential
 });
+var configuration = builder.Configuration;
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")) // Use 'builder.Configuration'
+           .EnableSensitiveDataLogging()
+           .LogTo(Console.WriteLine)); // Log SQL queries to the console
+
 
 var app = builder.Build();
 
@@ -63,6 +77,21 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+app.UseWebSockets();
+app.UseStaticFiles(new StaticFileOptions
+{
+    ServeUnknownFileTypes = true, // Allows unknown file types
+    DefaultContentType = "application/octet-stream", // Fallback MIME type
+    ContentTypeProvider = new FileExtensionContentTypeProvider
+    {
+        Mappings =
+        {
+            [".mobi"] = "application/x-mobipocket-ebook",
+            [".epub"] = "application/epub+zip",
+            [".fb2"] = "application/xml"
+        }
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -83,6 +112,12 @@ app.MapControllerRoute(
     name: "store",
     pattern: "Store/{action=Gallery}/{id?}",
     defaults: new { controller = "Store" });
+
+app.MapControllerRoute(
+    name: "OrderConfirmation",
+    pattern: "Cart/OrderConfirmation/{orderId}",
+    defaults: new { controller = "Cart", action = "OrderConfirmation" });
+
 
 
 app.MapControllerRoute(

@@ -1,4 +1,6 @@
-﻿namespace EbookStore.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EbookStore.Models
 {
     public class Cart
     {
@@ -7,6 +9,23 @@
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
 
-        public ICollection<CartItems> CartItems { get; set; }
+
+        public virtual ICollection<CartItems> CartItems { get; set; } = new List<CartItems>();
+
+        public Cart()
+        {
+            CartItems = new List<CartItems>();
+        }
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal TotalAmount
+        {
+            get
+            {
+                return CartItems?.Sum(item => item.Quantity * item.Price) ?? 0;
+            }
+        }
     }
 }
+
+

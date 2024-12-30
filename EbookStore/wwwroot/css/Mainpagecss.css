@@ -89,85 +89,124 @@ body, html {
             background-color: #fff;
             color: #000;
         }
-
 .latest-buzz {
-    display: flex; /* Use flexbox for better alignment */
-    flex-wrap: wrap; /* Allow wrapping if space runs out */
-    justify-content: center; /* Center the items horizontally */
-    gap: 15px; /* Reduced spacing between items */
-    padding: 30px 10px; /* Adjust padding */
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 20px 0;
 }
+
+
+.swiper-wrapper {
+    display: flex;
+    transition: transform 0.3s ease;
+}
+
+.swiper-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 300px; /* Ensure a consistent card width */
+    flex-shrink: 0;
+}
+
+    .swiper-slide:last-child {
+        margin-right: 0; /* Remove spacing for the last slide */
+    }
+
 
 .latest-buzz-item {
-    flex: 0 1 calc(20% - 15px); /* Each card takes 20% width with spacing */
-    max-width: 300px; /* Set a maximum width for consistency */
-    background-color: #fff;
+    flex: 0 0 calc(20% - 10px); /* Take 20% width minus 10px gap */
+    max-width: calc(20% - 10px);
+    background: #fff;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out;
-}
-
-.latest-buzz-item img {
-    width: 100%; /* Ensure the image takes the full card width */
-    height: 150px; /* Adjust height for uniformity */
-    object-fit: cover; /* Crop image to fit properly */
-}
-
-.latest-buzz-item .description {
-    padding: 15px; /* Adjust spacing inside card */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
+    padding: 15px;
+    margin: 5px;
+    transition: transform 0.3s ease;
 }
 
-.latest-buzz-item:hover {
-    transform: translateY(-5px); /* Subtle hover effect */
-}
+    .latest-buzz-item:hover {
+        transform: translateY(-5px); /* Add a hover effect for interactivity */
+    }
 
-.latest-buzz-item img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-bottom: 1px solid #ddd;
-}
+    .latest-buzz-item img {
+        width: 100%;
+        height: 120px; /* Adjust height for smaller cards */
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
 
-.latest-buzz-item .description {
-    padding: 20px;
-    text-align: center;
-}
-
-    .latest-buzz-item .description h3 {
-        font-size: 1.2em;
-        margin-top: 10px;
+    .latest-buzz-item h3 {
+        font-size: 1rem;
+        margin: 10px 0;
+        font-weight: bold;
         color: #333;
     }
 
-    .latest-buzz-item .description p {
-        font-size: 1em;
-        color: #555;
+    .latest-buzz-item p {
+        font-size: 0.9rem;
+        color: #666;
         margin: 10px 0;
     }
 
-.latest-buzz-item .browse-btn {
+.browse-btn {
     display: inline-block;
-    background-color: #FF6F00;
+    padding: 8px 15px;
     color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    margin-top: 10px;
+    background-color: #FF6F00;
     border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
-    .latest-buzz-item .browse-btn:hover {
+    .browse-btn:hover {
         background-color: #FF3D00;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        transform: translateY(-2px);
+        transform: scale(1.05);
     }
 
-    .latest-buzz-item .browse-btn:active {
-        transform: translateY(0);
+/* Swiper navigation buttons */
+.swiper-button-next, .swiper-button-prev {
+    color: #FF6F00;
+    font-size: 1.2rem;
+    transition: color 0.3s, transform 0.2s;
+}
+autoplay: {
+    delay: 5000, // Auto-slide every 5 seconds disableOnInteraction: false,
+}
+
+,
+.swiper-button-next:hover, .swiper-button-prev:hover {
+    color: #FF3D00;
+    transform: scale(1.2);
+}
+
+/* Pagination dots */
+.swiper-pagination-bullet {
+    background-color: #FF6F00;
+    opacity: 0.7;
+    transition: opacity 0.3s, transform 0.2s;
+}
+
+    .swiper-pagination-bullet:hover {
+        opacity: 1;
+        transform: scale(1.1);
     }
+
+.swiper-pagination-bullet-active {
+    background-color: #FF3D00;
+}
+
 
 /* FAQ Section */
 .faq-section {

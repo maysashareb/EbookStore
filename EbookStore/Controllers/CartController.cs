@@ -7,14 +7,17 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using System.Security.Claims;
+using System.Globalization;
 
 namespace EbookStore.Controllers
 {
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly string _clientId = "YourPayPalClientId";
-        private readonly string _clientSecret = "YourPayPalClientSecret";
+        private readonly string _clientId = "AV8bBCDpoCX38F6pEGoVIh5H8aFnjpg7wgqcr75-N3aFBZlWUPIdzDoH36kWxICqWa4nGsR2PgGNTV";
+        private readonly string _clientSecret = "EDtGhU509jfIRWjq4n2zqgbloZKUi0gm4yDYqRtfLNgqmrpprH_Gv_-_-SvU_5rixZbXNFx15bImtzep";
         private readonly string _baseUrl = "https://api.sandbox.paypal.com";
 
         public CartController(ApplicationDbContext context)
@@ -22,15 +25,21 @@ namespace EbookStore.Controllers
             _context = context;
         }
 
-        // Add to Cart
-        public IActionResult AddToCart(int bookId, string transactionType)
+        public IActionResult AddToCart(int bookId)
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
+            {
                 return Unauthorized();
+            }
 
-            var cart = _context.Carts.FirstOrDefault(c => c.UserID == userId && c.IsActive);
+            var book = _context.Books.Find(bookId);
+            if (book == null || book.AvailableCopies == 0)
+            {
+                return BadRequest("This book is unavailable.");
+            }
+
+            var cart = GetActiveCart(userId);
             if (cart == null)
             {
                 cart = new Cart { UserID = userId, IsActive = true, CreatedAt = DateTime.Now };
@@ -38,55 +47,337 @@ namespace EbookStore.Controllers
                 _context.SaveChanges();
             }
 
-            var existingItem = _context.CartItems.FirstOrDefault(ci => ci.CartID == cart.CartID && ci.BookID == bookId && ci.TransactionType == transactionType);
-
-            if (existingItem != null)
+            // Check if the book already exists in the cart
+            var existingCartItem = _context.CartItems.FirstOrDefault(ci => ci.CartID == cart.CartID && ci.BookId == bookId);
+            if (existingCartItem != null)
             {
-                existingItem.Quantity++;
-            }
-            else
-            {
-                var cartItem = new CartItems
-                {
-                    CartID = cart.CartID,
-                    BookID = bookId,
-                    Quantity = 1,
-                    TransactionType = transactionType ?? "DefaultType"
-                };
-                _context.CartItems.Add(cartItem);
+                return BadRequest("This book is already in your cart.");
             }
 
+            // Add the book to the cart
+            _context.CartItems.Add(new CartItems
+            {
+                CartID = cart.CartID,
+                BookId = bookId,
+                Price = book.Price
+            });
             _context.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
-        // View Cart
+
         public IActionResult Index()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
+            var cart = GetActiveCartWithItems(userId);
+            if (cart == null)
+                return View(new List<CartItems>());
+
+            return View(cart.CartItems.ToList());
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveFromCart(int bookId)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var cartItem = _context.CartItems
+                .Include(ci => ci.Cart)
+                .FirstOrDefault(ci => ci.BookId == bookId && ci.Cart.UserID == userId && ci.Cart.IsActive);
+
+            if (cartItem == null)
+                return NotFound("Item not found in your cart.");
+
+            _context.CartItems.Remove(cartItem);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> CheckoutWithPayPal(string orderId)
+        {
+            if (string.IsNullOrEmpty(orderId))
+                return BadRequest("Order ID is required for PayPal.");
+
+            // Simulate PayPal payment capture logic
+            var paymentSuccessful = await CapturePayPalOrder(orderId);
+            if (!paymentSuccessful)
+                return BadRequest("PayPal payment failed.");
+
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var cart = GetActiveCartWithItems(userId);
+
+            var order = CreateOrder(cart, "Confirmed", "PayPal");
+            if (order == null)
+                return BadRequest("An error occurred while processing your order.");
+
+            return RedirectToAction("OrderConfirmation", new { orderId = order.OrderID });
+        }
+        [HttpPost]
+        public IActionResult CheckoutWithCreditCard(string cardName, string cardNumber, string expiryDate, string cvv)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User is not authenticated.");
+            }
+
+            if (!ValidateCreditCardInput(cardName, cardNumber, expiryDate, cvv))
+            {
+                return BadRequest("Invalid credit card details.");
+            }
+
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                // Retrieve user's cart
+                var cart = _context.Carts
+                    .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.Book)
+                    .FirstOrDefault(c => c.UserID == userId && c.IsActive);
+
+                if (cart == null || !cart.CartItems.Any())
+                {
+                    throw new InvalidOperationException("Your cart is empty or invalid.");
+                }
+
+                // Ensure no duplicate books in the cart
+                if (cart.CartItems.GroupBy(ci => ci.BookId).Any(g => g.Count() > 1))
+                {
+                    throw new InvalidOperationException("Your cart contains duplicate books. Please ensure each book is added only once.");
+                }
+
+                // Calculate total amount
+                decimal totalAmount = cart.CartItems.Sum(ci => ci.Price);
+
+                // Create the order
+                var order = new Order
+                {
+                    UserID = userId,
+                    OrderDate = DateTime.Now,
+                    TotalAmount = totalAmount,
+                    PaymentStatus = "Confirmed",
+                    PaymentMethod = "CreditCard"
+                };
+
+                _context.Orders.Add(order);
+                _context.SaveChanges();
+
+                // Process each cart item
+                foreach (var cartItem in cart.CartItems)
+                {
+                    var book = _context.Books.Find(cartItem.BookId);
+
+                    // Validate book availability
+                    if (book == null || book.AvailableCopies < 1)
+                    {
+                        throw new InvalidOperationException($"Book '{book?.Title}' is out of stock.");
+                    }
+
+                    // Update inventory
+                    book.AvailableCopies -= 1;
+
+                    // Add order item
+                    _context.OrderItems.Add(new OrderItem
+                    {
+                        OrderID = order.OrderID,
+                        BookId = cartItem.BookId,
+                        Quantity = 1, // Only one book of each type is allowed
+                        Price = cartItem.Price
+                    });
+
+                    // Add to user's library
+                    _context.UserLibrary.Add(new UserLibrary
+                    {
+                        UserID = userId,
+                        BookID = cartItem.BookId,
+                        PurchaseDate = DateTime.Now,
+                        OrderID = order.OrderID,
+                        Format = "PDF,EPUB,MOBI,HTML"
+                    });
+                }
+
+                // Deactivate the cart
+                cart.IsActive = false;
+                _context.CartItems.RemoveRange(cart.CartItems);
+                _context.SaveChanges();
+
+                transaction.Commit();
+
+                return RedirectToAction("OrderConfirmation", new { orderId = order.OrderID });
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return BadRequest(new
+                {
+                    Error = ex.GetType().Name,
+                    Details = ex.Message,
+                    InnerException = ex.InnerException?.Message
+                });
+            }
+        }
+
+        private bool ValidateCreditCardInput(string cardName, string cardNumber, string expiryDate, string cvv)
+        {
+            if (string.IsNullOrWhiteSpace(cardName) ||
+                string.IsNullOrWhiteSpace(cardNumber) ||
+                string.IsNullOrWhiteSpace(expiryDate) ||
+                string.IsNullOrWhiteSpace(cvv))
+                return false;
+
+            // Remove spaces and non-numeric characters
+            cardNumber = Regex.Replace(cardNumber, @"\D", "");
+            cvv = Regex.Replace(cvv, @"\D", "");
+
+            // Validate card number (must be 16 digits)
+            if (!Regex.IsMatch(cardNumber, @"^\d{16}$"))
+                return false;
+
+            // Validate CVV (must be 3 digits)
+            if (!Regex.IsMatch(cvv, @"^\d{3}$"))
+                return false;
+
+            // Validate expiry date
+            if (!DateTime.TryParseExact(expiryDate,
+                new[] { "MM/yyyy", "MM/yy", "yyyy-MM" },
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out DateTime expiry))
+                return false;
+
+            // Check if card is not expired
+            var currentDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            return expiry >= currentDate;
+        }
+
+
+        private Cart GetActiveCart(string userId)
+        {
+            return _context.Carts.FirstOrDefault(c => c.UserID == userId && c.IsActive);
+        }
+
+
+        private Cart GetActiveCartWithItems(string userId)
+        {
             var cart = _context.Carts
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.Book)
                 .FirstOrDefault(c => c.UserID == userId && c.IsActive);
 
             if (cart == null)
-                return View(new List<CartItems>());
+            {
+                Console.WriteLine($"[Debug] No active cart found for userId: {userId}");
+            }
+            else
+            {
+                Console.WriteLine($"[Debug] Cart ID: {cart.CartID}, Items Count: {cart.CartItems?.Count ?? 0}");
+                foreach (var item in cart.CartItems)
+                {
+                    Console.WriteLine($"[Debug] CartItem - BookID: {item.BookId}, Quantity: {item.Quantity}");
+                }
+            }
 
-            return View(cart.CartItems.ToList());
+            return cart;
         }
 
-        // Checkout
-        [HttpPost]
-        public async Task<IActionResult> Checkout()
-        {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
+        private bool CartContainsBook(int cartId, int bookId)
+        {
+            return _context.CartItems.Any(ci => ci.CartID == cartId && ci.BookId == bookId);
+        }
+
+        private Order CreateOrder(Cart cart, string paymentStatus, string? paymentMethod)
+        {
+            if (cart == null || cart.CartItems == null || !cart.CartItems.Any())
+                throw new InvalidOperationException("Cart is empty or invalid.");
+
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                // First verify all books are available
+                foreach (var item in cart.CartItems)
+                {
+                    var book = _context.Books.Find(item.BookId);
+                    if (book == null || book.AvailableCopies < item.Quantity)
+                        throw new InvalidOperationException($"Book '{book?.Title}' is not available in the requested quantity.");
+                }
+
+                // Create the order
+                var order = new Order
+                {
+                    UserID = cart.UserID,
+                    OrderDate = DateTime.Now,
+                    TotalAmount = cart.CartItems.Sum(ci => ci.Price * ci.Quantity), // Use the price from CartItems
+                    PaymentStatus = paymentStatus,
+                    PaymentMethod = paymentMethod
+                };
+
+                _context.Orders.Add(order);
+                _context.SaveChanges();
+
+                // Create order items
+                var orderItems = cart.CartItems.Select(item => new OrderItem
+                {
+                    OrderID = order.OrderID,
+                    BookId = item.BookId,
+                    Quantity = item.Quantity,
+                    Price = item.Price // Use the price from CartItem
+                }).ToList();
+
+                _context.OrderItems.AddRange(orderItems);
+
+                // Update book quantities
+                foreach (var item in cart.CartItems)
+                {
+                    var book = _context.Books.Find(item.BookId);
+                    book.AvailableCopies -= item.Quantity;
+                }
+
+                // Clear the cart
+                _context.CartItems.RemoveRange(cart.CartItems);
+                cart.IsActive = false;
+
+                _context.SaveChanges();
+                transaction.Commit();
+                return order;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Console.WriteLine($"Error in CreateOrder: {ex.Message}");
+                throw;
+            }
+        }
+
+
+
+
+        private async Task<bool> CapturePayPalOrder(string orderId)
+        {
+            // Simulate PayPal capture logic; replace with actual PayPal integration
+            await Task.Delay(100); // Simulating async API call
+            return true; // Assume the payment is successful
+        }
+
+        public IActionResult Checkout()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
+            {
                 return Unauthorized();
+            }
 
             var cart = _context.Carts
                 .Include(c => c.CartItems)
@@ -94,132 +385,67 @@ namespace EbookStore.Controllers
                 .FirstOrDefault(c => c.UserID == userId && c.IsActive);
 
             if (cart == null || !cart.CartItems.Any())
+            {
                 return BadRequest("Your cart is empty.");
+            }
 
-            var order = new EbookStore.Models.Order
+            var order = new Order
             {
                 UserID = userId,
                 OrderDate = DateTime.Now,
-                TotalAmount = cart.CartItems.Sum(ci => ci.TransactionType == "Buy" ? ci.Book.Price * ci.Quantity : ci.Book.BorrowPrice * ci.Quantity),
+                TotalAmount = cart.CartItems.Sum(ci => ci.Price),
                 PaymentStatus = "Pending",
-                PaymentMethod = "PayPal"
+                PaymentMethod = "CreditCard"
             };
+
             _context.Orders.Add(order);
             _context.SaveChanges();
 
-            foreach (var item in cart.CartItems)
+            foreach (var cartItem in cart.CartItems)
             {
                 _context.OrderItems.Add(new OrderItem
                 {
                     OrderID = order.OrderID,
-                    BookID = item.BookID,
-                    Quantity = item.Quantity,
-                    Price = item.TransactionType == "Buy" ? item.Book.Price : item.Book.BorrowPrice
+                    BookId = cartItem.BookId,
+                    Price = cartItem.Price
                 });
             }
 
-            _context.CartItems.RemoveRange(cart.CartItems);
+            // Clear the cart
             cart.IsActive = false;
-
+            _context.CartItems.RemoveRange(cart.CartItems);
             _context.SaveChanges();
 
-            // Redirect to PayPal for payment
-            var approvalUrl = await CreatePayPalPayment(order);
-            if (string.IsNullOrEmpty(approvalUrl))
-            {
-                return View("Error");
-            }
-
-            return Redirect(approvalUrl);
+            return RedirectToAction("OrderConfirmation", new { orderId = order.OrderID });
         }
 
-        // Create PayPal Payment
-        private async Task<string> CreatePayPalPayment(EbookStore.Models.Order order)
+        [HttpGet]
+        public IActionResult GetCartCount()
         {
-            using var client = new HttpClient();
-            var accessToken = await GetPayPalAccessToken();
-
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-
-            var itemList = order.OrderItems.Select(item => new
+            try
             {
-                name = item.Book.Title,
-                quantity = item.Quantity.ToString(),
-                unit_amount = new { currency_code = "USD", value = item.Price.ToString("F2") },
-                category = "PHYSICAL_GOODS"
-            }).ToList();
-
-            var payload = new
-            {
-                intent = "CAPTURE",
-                purchase_units = new[]
+                // Retrieve the cart for the current user
+                var userId = User.Identity.IsAuthenticated ? User.FindFirstValue(ClaimTypes.NameIdentifier) : null;
+                if (userId == null)
                 {
-                    new {
-                        amount = new {
-                            currency_code = "USD",
-                            value = order.TotalAmount.ToString("F2"),
-                            breakdown = new {
-                                item_total = new { currency_code = "USD", value = order.TotalAmount.ToString("F2") }
-                            }
-                        },
-                        items = itemList
-                    }
-                },
-                application_context = new
-                {
-                    return_url = Url.Action("Success", "Cart", null, Request.Scheme),
-                    cancel_url = Url.Action("Cancel", "Cart", null, Request.Scheme)
+                    return Json(0); // Return 0 if the user is not authenticated
                 }
-            };
 
-            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync($"{_baseUrl}/v2/checkout/orders", content);
+                var cart = _context.Carts.Include(c => c.CartItems)
+                                         .FirstOrDefault(c => c.UserID == userId);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return null;
+                // Return the count of items in the cart
+                var cartCount = cart?.CartItems.Sum(item => item.Quantity) ?? 0;
+                return Json(cartCount);
             }
-
-            var responseBody = await response.Content.ReadAsStringAsync();
-            dynamic result = JsonConvert.DeserializeObject(responseBody);
-
-            var links = (IEnumerable<dynamic>)result.links;
-            return links.FirstOrDefault(link => link.rel == "approve")?.href;
-
-        }
-
-        // Get PayPal Access Token
-        private async Task<string> GetPayPalAccessToken()
-        {
-            using var client = new HttpClient();
-
-            var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_clientId}:{_clientSecret}"));
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", authHeader);
-
-            var content = new FormUrlEncodedContent(new[]
+            catch (Exception ex)
             {
-                new KeyValuePair<string, string>("grant_type", "client_credentials")
-            });
-
-            var response = await client.PostAsync($"{_baseUrl}/v1/oauth2/token", content);
-            response.EnsureSuccessStatusCode();
-
-            var responseBody = await response.Content.ReadAsStringAsync();
-            dynamic result = JsonConvert.DeserializeObject(responseBody);
-
-            return result.access_token;
+                Console.WriteLine("Error fetching cart count: " + ex.Message);
+                return Json(0);
+            }
         }
 
-        // Success
-        public IActionResult Success(string paymentId)
-        {
-            return View("Success");
-        }
 
-        // Cancel
-        public IActionResult Cancel()
-        {
-            return View("Cancel");
-        }
+
     }
 }

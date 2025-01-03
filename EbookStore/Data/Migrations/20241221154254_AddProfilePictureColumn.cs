@@ -5,7 +5,7 @@
 namespace EbookStore.Migrations
 {
     /// <inheritdoc />
-    public partial class FixPendingChanges : Migration
+    public partial class AddProfilePictureColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,23 +19,6 @@ namespace EbookStore.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)",
                 oldNullable: true);
-            migrationBuilder.AlterColumn<DateTime>(
-              name: "CreatedDate",
-              table: "Books",
-              nullable: false,
-             defaultValueSql: "GETDATE()", // Set a default value
-              oldClrType: typeof(DateTime),
-              oldNullable: true);
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Description",
-                table: "Books",
-                type: "nvarchar(100)",
-                maxLength: 100,
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)",
-                oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Author",
@@ -46,11 +29,33 @@ namespace EbookStore.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)",
                 oldNullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "agelimt",
+                table: "Books",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "bookrate",
+                table: "Books",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "agelimt",
+                table: "Books");
+
+            migrationBuilder.DropColumn(
+               name: "bookrate",
+               table: "Books");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Title",
                 table: "Books",
@@ -58,16 +63,6 @@ namespace EbookStore.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Description",
-                table: "Books",
-                type: "nvarchar(max)",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(100)",
-                oldMaxLength: 100,
-                oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Author",

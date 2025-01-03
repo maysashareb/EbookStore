@@ -5,7 +5,7 @@
 namespace EbookStore.Migrations
 {
     /// <inheritdoc />
-    public partial class AddAgeColumnToBook : Migration
+    public partial class SyncDatabaseSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,22 +39,11 @@ namespace EbookStore.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)",
                 oldNullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "agelimt",
-                table: "Books",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "agelimt",
-                table: "Books");
-
             migrationBuilder.AlterColumn<string>(
                 name: "Title",
                 table: "Books",

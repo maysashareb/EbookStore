@@ -22,7 +22,7 @@ public class CustomerController : Controller
         // Fetch categories from the database
         var categories = _context.Categories.ToList();
         // Call the function to get the latest 4 books
-        var latestBooks = GetLatestBooks(4);
+       var latestBooks = GetLatestBooks(4);
         var books = _context.Books.ToList();
         ViewBag.BookCount = books.Count;
         // Fetch discounted books

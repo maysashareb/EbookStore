@@ -19,6 +19,18 @@
     text-align: center; /* Center align the text */
     display: block; /* Ensure it behaves as a block-level element for centering */
 }
+.store-btn {
+    background-color: orange; /* Sets the background color to orange */
+    color: white; /* Sets the text color to white */
+    border: none; /* Removes any borders */
+    padding: 10px 20px; /* Adjusts the padding for better appearance */
+    border-radius: 5px; /* Adds rounded corners */
+    cursor: pointer; /* Changes cursor to pointer on hover */
+}
+
+    .store-btn:hover {
+        background-color: darkorange; /* Slightly darker orange for hover effect */
+    }
 
 
 /* Ensures all product images have the same size */

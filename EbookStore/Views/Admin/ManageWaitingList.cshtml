@@ -1,0 +1,41 @@
+﻿@model List<EbookStore.Models.WaitingList>
+
+<h2>Manage Waiting List</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Date Added</th>
+                <th>Borrowed Date</th>
+                <th>Due Date</th>
+                <th>Reminder Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.User.UserName (@item.User.Email)</td>
+                    <td>@item.DateAdded.ToString("yyyy-MM-dd")</td>
+                    <td>@item.BorrowedDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@item.DueDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@(item.SendReminder ? "Reminder Sent" : "No Reminder")</td>
+                    <td>
+                        <form asp-action="NotifyNextUser" method="post">
+                            <input type="hidden" name="bookId" value="@item.BookId" />
+                            <button type="submit" class="btn btn-primary">Notify User</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No waiting list entries found.</p>
+}

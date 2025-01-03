@@ -1,0 +1,24 @@
+﻿@model EbookStore.Models.Book
+
+@{
+    ViewData["Title"] = "Join Waiting List";
+}
+
+<h2>Join Waiting List - @Model.Title</h2>
+
+<p>
+    Unfortunately, there are no available copies of "@Model.Title" at the moment. However, you can join the waiting list to be notified when a copy becomes available.
+</p>
+
+<p>To join the waiting list, click the "Add to Waiting List" button below.</p>
+
+<form asp-action="AddToWaitingList" method="post">
+    <input type="hidden" name="bookId" value="@Model.Id" />
+    <button type="submit" class="btn btn-primary">Add to Waiting List</button>
+</form>
+
+<p>If you do not wish to join the waiting list, you can return to the book gallery by clicking the button below:</p>
+
+<a href="@Url.Action("Gallery", "Store")" class="btn btn-warning">
+    Back to Book Gallery
+</a>

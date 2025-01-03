@@ -1,0 +1,45 @@
+﻿@model EbookStore.Models.Book
+
+@{
+    ViewData["Title"] = "How to Borrow";
+}
+
+<h2>How to Borrow - @Model.Title</h2>
+
+<!-- Display Success or Error Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<p>
+    Thank you for choosing to borrow "@Model.Title". Here's how you can borrow this book:
+</p>
+
+<ul>
+    <li>Step 1: You clicked the "Borrow" button on the book's details page.</li>
+    <li>Step 2: We have not yet reduced the number of available copies. If you want to borrow this book, click "Add to Cart" below.</li>
+    <li>Step 3: Once you click "Add to Cart", we will reduce the number of available copies and add you to our borrowed books list. You can keep the book for the next 30 days.</li>
+    <li>Step 4: Remember to return the book within the given period to avoid late fees.</li>
+</ul>
+
+<!-- Add to Cart Button to confirm borrowing -->
+<a asp-controller="" asp-action="AddToCart" asp-route-id=""
+   class="btn btn-primary store-btn float-right">
+    <i class="fa-solid fa-cart-plus"></i> Add to cart
+</a>
+
+<p>To return to the gallery of books, click the button below:</p>
+
+<a href="@Url.Action("Gallery", "Store")" class="btn btn-warning">
+    Back to Book Gallery
+</a>

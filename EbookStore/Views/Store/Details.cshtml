@@ -12,69 +12,115 @@
 </head>
 
 <!-- Large container for everything (book details and image in one container) -->
-    <div class="row">
-        <!-- Book Details and Image Section (Inside the same container) -->
-        <div class="col-md-12">
-                <div class="row">
-                    <!-- Left Column: Book Details -->
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h4>Book Details</h4>
-                            <dl class="row">
-                                <dt class="col-sm-3">Title:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Title)</dd>
-
-                                <dt class="col-sm-3">Author:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Author)</dd>
-
-                                <dt class="col-sm-3">Publish Year: </dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.PublisheYear)</dd>
-
-                                <dt class="col-sm-3">Category:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Category.Name)</dd>
-
-                                <dt class="col-sm-3">Price:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Price)</dd>
-
-                                <dt class="col-sm-3">Borrowing Price:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.BorrowPrice)</dd>
-
-                                <dt class="col-sm-3">Available Copies:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.AvailableCopies)</dd>
-
-                                <dt class="col-sm-3">Available Borrow Copies:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.AvailableCopiesBorrow)</dd>
-
-                                <dt class="col-sm-3">Age limitation:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.agelimt)</dd>
-
-
-                                <dt class="col-sm-3">Discount Price:</dt>
-                                <dd class="col-sm-9">
-                                    @if (Model.IsDiscounted)
-                                    {
-                                        //@Model.DiscountPrice.ToString("C")  <!-- Display Discount Price as Currency -->
-                                    }
-                                    else
-                                    {
-                                        <span>0.00</span>  <!-- Display 0 when no discount -->
-                                    }
-                                </dd>
-
-                                <dt class="col-sm-3">Description:</dt>
-                                <dd class="col-sm-9">@Html.DisplayFor(model => model.Description)</dd>
-                            </dl>
-                        </div>
-                        <div class="text-center">
-                            <a asp-action="Gallery" class="btn btn-warning"><i class="fa-solid fa-arrow-left"></i> Back</a>
-                            <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model.Id" class="btn btn-primary store-btn float-right"><i class="fa-solid fa-cart-plus"></i> Add to cart</a>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Book Image -->
-                    <div class="col-md-3">
-                            <img src="@Model.ImageUrl" class="card-img-top card-img-custom" alt="Book Image">
-                    </div>
-                </div>
-        </div>
+<div class="row">
+    <!-- Left Column: Book Image -->
+    <div class="col-md-4 d-flex align-items-start">
+        <img src="@Model.ImageUrl" class="card-img-top card-img-custom" alt="Book Image">
     </div>
+
+    <!-- Right Column: Book Details -->
+    <div class="col-md-8">
+        <div class="card-body">
+            <h4>Book Details</h4>
+            <dl class="row">
+                <dt class="col-sm-4">Title:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Title)</dd>
+
+                <dt class="col-sm-4">Author:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Author)</dd>
+
+                <dt class="col-sm-4">Publish Year:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.PublisheYear)</dd>
+
+                <dt class="col-sm-4">Category:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Category.Name)</dd>
+
+                <dt class="col-sm-4">Price:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Price)</dd>
+
+                <dt class="col-sm-4">Borrowing Price:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.BorrowPrice)</dd>
+
+                <dt class="col-sm-4">Age Limitation:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.agelimt)</dd>
+
+                <dt class="col-sm-4">Discount Price:</dt>
+                <dd class="col-sm-8">
+                    @if (Model.IsDiscounted)
+                    {
+                        @* <span>@Model.DiscountPrice.ToString("C")</span> *@
+                    }
+                    else
+                    {
+                        <span>0.00</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-4">Description:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Description)</dd>
+            </dl>
+        </div>
+
+        <!-- Rating Stars -->
+        <div class="row mt-3">
+            <div class="col-sm-12">
+                <div class="star-rating">
+                    @if (Model.bookrate.HasValue)
+                    {
+                        decimal rating = Model.bookrate.Value;
+
+                        for (int i = 1; i <= 10; i++)
+                        {
+                            if (i <= rating)
+                            {
+                                <i class="fa fa-star text-warning"></i> <!-- Fully Filled Star -->
+                            }
+                            else if (i - 1 < rating && i > rating)
+                            {
+                                <i class="fa fa-star-half-o text-warning"></i> <!-- Half Filled Star -->
+                            }
+                            else
+                            {
+                                <i class="fa fa-star text-secondary" style="opacity: 0.3;"></i> <!-- Empty Star with Outline -->
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <span>No Rating Available</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="text-center mt-4">
+            <a asp-action="Gallery" class="btn btn-warning"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model.Id" class="btn btn-primary store-btn float-right"><i class="fa-solid fa-cart-plus"></i> Add to cart</a>
+        </div>
+
+        @if (Model.Book.AvailableCopies > 0)
+        {
+            <form asp-action="Borrow" method="post">
+                <input type="hidden" name="bookId" value="@Model.Book.Id" />
+                <button type="submit" class="btn btn-primary">Borrow this Book</button>
+            </form>
+        }
+        else
+        {
+            <p class="text-danger">All copies are currently borrowed.</p>
+            <p>@Model.WaitingListCount people are waiting for this book.</p>
+            @if (Model.NextAvailableDate.HasValue)
+            {
+                <p>Next available on: @Model.NextAvailableDate.Value.ToString("MMMM dd, yyyy")</p>
+            }
+            <form asp-action="JoinWaitingList" method="post">
+                <input type="hidden" name="bookId" value="@Model.Book.Id" />
+                <button type="submit" class="btn btn-warning">Join Waiting List</button>
+            </form>
+        }
+
+
+    </div>
+</div>

@@ -1,4 +1,5 @@
 ﻿using EbookStore.Data;
+using EbookStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,12 +21,14 @@ namespace EbookStore.Controllers
 
         public IActionResult Gallery(string searchType, string searchQuery, string genreFilter, string yearFilter, string sortOrder)
         {
+            // Fetch books with category included
             var books = _context.Books.Include(b => b.Category).AsQueryable();
 
             // Get all categories
             ViewBag.Categories = _context.Categories.ToList();
+            Console.WriteLine($"Initial Books Count: {books.Count()}");
 
-            // Check if searchQuery is not empty and determine search type
+            // Search logic
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 if (searchType == "Title")
@@ -36,18 +39,21 @@ namespace EbookStore.Controllers
                 {
                     books = books.Where(b => b.Author.Contains(searchQuery));
                 }
+                Console.WriteLine($"Books Count After Search: {books.Count()}");
             }
 
-            // Apply genre filter if selected
+            // Genre filter
             if (!string.IsNullOrEmpty(genreFilter))
             {
                 books = books.Where(b => b.Category.Name == genreFilter);
+                Console.WriteLine($"Books Count After Genre Filter: {books.Count()}");
             }
 
-            // Apply year filter if selected
+            // Year filter
             if (!string.IsNullOrEmpty(yearFilter) && int.TryParse(yearFilter, out int year))
             {
                 books = books.Where(b => b.PublisheYear == year);
+                Console.WriteLine($"Books Count After Year Filter: {books.Count()}");
             }
 
             // Sorting logic
@@ -74,29 +80,42 @@ namespace EbookStore.Controllers
                     break;
             }
 
+            Console.WriteLine($"Final Books Count: {books.Count()}");
+
+            // Return the view with the books
             return View(books.ToList());
         }
 
 
-
-
-
-
         public IActionResult Details(int id)
         {
-            // Retrieve the book, including its associated Category
             var book = _context.Books
                 .Include(b => b.Category) // Eagerly load the related Category
                 .FirstOrDefault(b => b.Id == id);
 
-            // Handle the case where the book isn't found
             if (book == null)
             {
                 return NotFound();
             }
 
-            // Pass the book to the view
-            return View(book);
+            var waitingListCount = _context.WaitingLists
+                .Where(w => w.BookId == id)
+                .Count(); // Get the number of people waiting for this book
+
+            var nextAvailableDate = _context.Borrowings
+                .Where(b => b.BookId == id && b.ReturnDate == null)
+                .OrderBy(b => b.BorrowDate)
+                .Select(b => b.BorrowDate.AddDays(30)) // Assume books are borrowed for 30 days
+                .FirstOrDefault(); // Get the next available date for the book
+
+            var viewModel = new BookDetailsViewModel
+            {
+                Book = book,
+                WaitingListCount = waitingListCount,
+                NextAvailableDate = nextAvailableDate
+            };
+
+            return View(viewModel);
         }
 
     }

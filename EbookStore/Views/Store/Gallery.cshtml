@@ -84,24 +84,29 @@
 </form>
 
 <!-- Book Display -->
-<div class="row">
-    @foreach (var book in Model)
-    {
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <a asp-controller="Store" asp-action="Details" asp-route-id="@book.Id">
-                    <img src="@book.ImageUrl" class="card-img-top product-image" alt="@book.Title" />
-                </a>
-                <div class="card-body">
-                    <h5 class="mb-3">@book.Title</h5>
-                    <h6 class="author-name mb-3">@book.Author</h6>  <!-- Updated to h6 for smaller text -->
-                    <span class="card-text">@book.Price.ToString("c")</span>
-                    <a asp-controller="Store" asp-action="AddToCart" asp-route-id="@book.Id"
-                       class="btn btn-primary store-btn float-right">
-                        <i class="fa-solid fa-cart-plus"></i> Add to cart
-                    </a>
-                </div>
-            </div>
+<div class="row"> 
+    @foreach (var book in Model) 
+    { 
+         <div class="col-md-3 mb-4"> 
+             <div class="card"> 
+                 <a asp-controller="Store" asp-action="Details" asp-route-id="@book.Id"> 
+                     <img src="@book.ImageUrl" class="card-img-top product-image" alt="@book.Title" /> 
+                 </a> 
+                 <div class="card-body"> 
+                    <h5 class="mb-3">@book.Title</h5> 
+                     <h6 class="author-name mb-3">@book.Author</h6> 
+                    <span class="card-text">@book.Price.ToString("c")</span> 
+                     <a asp-controller="Store" asp-action="AddToCart" asp-route-id="@book.Id" 
+                        class="btn btn-primary store-btn float-right"> 
+                         <i class="fa-solid fa-cart-plus"></i> Add to cart 
+                     </a> 
+                 </div> 
+             </div> 
         </div>
-    }
-</div>
+     }
+ </div>
+
+
+
+
+

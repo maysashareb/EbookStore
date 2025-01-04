@@ -62,6 +62,10 @@
         public DbSet<Message> Messages { get; set; }
         public DbSet<Rating> Ratings { get; set; }
 
+        public DbSet<WaitingList> WaitingLists { get; set; }
+
+        public DbSet<Borrowing> Borrowings { get; set; }
+
         // No need to explicitly define AppUsers DbSet; IdentityDbContext already manages it
         // If you must define it for querying purposes, uncomment the line below
         // public DbSet<AppUser> AppUsers { get; set; }

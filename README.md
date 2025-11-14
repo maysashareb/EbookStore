@@ -1,0 +1,1 @@
+Coordinated the development of an ASP.NET MVC and SQL Server digital bookstore. Oversaw feature implementation from user login to payment, tracked KPIs such as response time and transaction success rates, and prepared reports on project progress.
